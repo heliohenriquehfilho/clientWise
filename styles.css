@@ -1,0 +1,22 @@
+/* Alterar a cor de fundo do aplicativo */
+body {
+    background-color: #ffffff; /* Altere o código da cor para o desejado */
+    color: #333333; /* Cor do texto */
+    width: 100%;
+}
+
+/* Ajustar cores do cabeçalho */
+header {
+    background-color: #333333; /* Altere para a cor do cabeçalho */
+    color: #ffffff; /* Cor do texto no cabeçalho */
+}
+
+/* Estilo para os botões */
+button {
+    background-color: #4CAF50; /* Cor de fundo dos botões */
+    color: white;
+}
+
+button:hover {
+    background-color: #45a049; /* Cor dos botões ao passar o mouse */
+}
