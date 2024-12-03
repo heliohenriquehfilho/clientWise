@@ -15,7 +15,7 @@ supabase: Client = create_client(url, key)
 
 def renderizar_gerenciamento_de_vendas(user_id):
     vendas = obter_dados_tabela("vendas", user_id)
-    st.dataframe(vendas)
+    st.dataframe(vendas, column_order=["id", "cliente", "produto", "quantidade", "desconto", "data_venda", "pagamento", "vendedor", "valor"])
 
     venda_id = st.selectbox("Selecione o id da venda", [venda["id"] for venda in vendas])
 
