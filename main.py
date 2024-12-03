@@ -44,6 +44,7 @@ with st.expander("📢 Novidades da versão 0.0.4"):
     - **Upload cliente por CSV:** opção de subir CSV para input de dados de clientes.
     - **Tabelas organizadas:** tabelas nos insights de vendas mais organizadas.
     - **Novo Menu:** novo menu no gerenciador de vendas.
+    - **Bugs Resolvidos:** bugs no gerenciamento de clientes e vendas resolvidos.
     """)
 
 st.divider()  # Adiciona uma linha divisória para separação visual
