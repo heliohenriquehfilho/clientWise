@@ -2,6 +2,7 @@ import streamlit as st
 from supabase import create_client, Client
 from dotenv import load_dotenv
 import os
+from streamlit_cookies_manager import CookieManager
 
 load_dotenv()
 st.set_page_config(layout="wide")
@@ -31,6 +32,8 @@ except Exception as e:
     raise
 
 st.title("ClientWise")
+
+cookies = CookieManager()
 
 # Função para registrar usuários
 def registrar_usuario(email, senha):
@@ -88,12 +91,14 @@ if not st.session_state.autenticado:
         st.subheader("Login")
         email = st.text_input("Email")
         senha = st.text_input("Senha", type="password")
+
         if st.button("Login"):
             user_id = autenticar_usuario(email, senha)
             if user_id:
-                st.success("Login realizado com sucesso!")
                 st.session_state.autenticado = True  # Atualiza o estado de autenticação
                 st.session_state.user_id = user_id  # Armazena o user_id na sessão
+                st.success("Login realizado com sucesso!")
+                st.rerun()
             else:
                 st.error("Email ou senha inválidos.")
 else:
@@ -101,6 +106,7 @@ else:
     if st.sidebar.button("Sair"):
         st.session_state.autenticado = False
         st.session_state.user_id = None
+        st.rerun()
 
     user_id = st.session_state.user_id  # Recupera o user_id da sessão
 

@@ -17,6 +17,11 @@ def renderizar_gerenciador_de_produtos(user_id):
     produtos = supabase.table("produtos").select("*").eq("user_id", user_id).execute().data
     vendas = supabase.table("vendas").select("*").eq("user_id", user_id).execute().data
 
+    st.dataframe(produtos, column_order=[
+        "nome", "preco", "descricao", "quantidade", 
+        "ativo", "custo", "margem_lucro"
+    ], )
+
     produto_selecionado = {}
 
     if produtos:

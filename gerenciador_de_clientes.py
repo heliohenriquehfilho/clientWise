@@ -16,6 +16,11 @@ def renderizar_gerenciador_de_clientes(user_id):
     # Carregar clientes do Supabase
     clientes = supabase.table("clientes").select("*").eq("user_id", user_id).execute().data
 
+    st.dataframe(clientes, column_order=[
+        "nome", "endereco", "email", "bairro", "cidade", 
+        "estado", "cep", "ativo", "genero", "idade"
+    ])
+
     if clientes:
         nome_cliente = [cliente["nome"] for cliente in clientes]
         cliente_selecionado = st.selectbox("Selecione o cliente", nome_cliente)
