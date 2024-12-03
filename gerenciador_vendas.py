@@ -7,6 +7,7 @@ from cadastro_produto import renderizar_cadastro_de_produto
 from gerenciador_de_clientes import renderizar_gerenciador_de_clientes
 from gerenciador_de_produtos import renderizar_gerenciador_de_produtos
 from gerenciador_de_vendedores import renderizar_gerenciador_de_vendedores
+from gerenciador_de_vendas import renderizar_gerenciamento_de_vendas
 
 if st.session_state.autenticado:
     user_id = st.session_state.get("user_id")
@@ -48,13 +49,14 @@ def renderizar_gerenciador_de_vendas(user_id):
         menu_vendas = st.radio(
             "Navegação",
             [
-                "Cadastro de Venda", "Insights de Vendas",
+                "Cadastro de Venda", "Gerenciamento de Vendas", "Insights de Vendas",
             ],
             horizontal=True
         )
 
         mapa_funcoes_vendas = {
             "Cadastro de Venda": renderizar_cadastro_de_venda,
+            "Gerenciamento de Vendas": renderizar_gerenciamento_de_vendas,
             "Insights de Vendas": renderizar_insight_de_vendas,
         }
 

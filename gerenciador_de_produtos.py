@@ -15,6 +15,7 @@ def renderizar_gerenciador_de_produtos(user_id):
 
     # Carregar produtos do Supabase, filtrando pelo user_id
     produtos = supabase.table("produtos").select("*").eq("user_id", user_id).execute().data
+    vendas = supabase.table("vendas").select("*").eq("user_id", user_id).execute().data
 
     produto_selecionado = {}
 
@@ -81,10 +82,16 @@ def renderizar_gerenciador_de_produtos(user_id):
 
         # Excluir produto
         if st.button("Excluir Produto"):
-            resposta = supabase.table("produtos").delete().eq("nome", produto_selecionado_nome).execute()
-            if resposta.status_code == 200:
-                st.success(f"Produto '{produto_selecionado_nome}' excluído com sucesso.")
+            venda = next(v for v in vendas if v["produto"] == produto_selecionado_nome)
+            if venda:
+                st.error("Esse produto tem venda associado, por favor desative o produto no gerenciador de produto")
+                st.error("Esse produto não poderá ser excluído.")
             else:
-                st.error(f"Erro ao excluir produto: {resposta.error_message}")
+                resposta = supabase.table("produtos").delete().eq("nome", produto_selecionado_nome).execute()
+                try:
+                    if resposta.data:
+                        st.success(f"Produto '{produto_selecionado_nome}' excluído com sucesso.")
+                except Exception as e:
+                    st.error(f"Erro ao excluir o produto: {e}")
     else:
         st.warning("Nenhum produto cadastrado.")
