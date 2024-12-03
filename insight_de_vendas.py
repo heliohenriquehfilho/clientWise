@@ -128,4 +128,19 @@ def renderizar_insight_de_vendas(user_id):
     )
 
     st.markdown("Vendas: ")
-    st.dataframe(vendas, use_container_width=True)
+    st.dataframe(
+        vendas, 
+        use_container_width=True,
+        column_order=["cliente", "produto", "quantidade", "desconto", 
+                      "data_venda", "pagamento", "vendedor", "valor"],
+        column_config={
+            "cliente": "Cliente",
+            "produto": "Produto",
+            "quantidade": "Quantidade Vendida",
+            "desconto": "Desconto",
+            "data_venda": "Data da Venda",
+            "pagamento": "Forma de Pagamento",
+            "vendedor": "Vendedor",
+            "valor": "Valor Total"
+        }
+    )

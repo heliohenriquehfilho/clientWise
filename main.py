@@ -36,15 +36,13 @@ except Exception as e:
     print(f"Erro ao criar cliente Supabase: {e}")
     raise
 
-st.title("ClientWise v0.0.3 🚀")
+st.title("ClientWise v0.0.4 🚀")
 
-with st.expander("📢 Novidades da versão 0.0.3"):
+with st.expander("📢 Novidades da versão 0.0.4"):
     st.markdown("""
     ### 🆕 Novidades e Melhorias
-    - **Novas formas de produto:** Agora é possível cadastrar produtos como **Digital** ou **Físico**.
-    - **Correções de bugs:** Melhoramos a estabilidade do sistema.
-    - **Visualização aprimorada:** Tabelas mais limpas no insight de vendas para facilitar a análise.
-    - **Menu Otimizado:** Navegação do menu mais simples e intuitiva.
+    - **Upload cliente por CSV:** opção de subir CSV para input de dados de clientes.
+    - **Tabelas organizadas:** tabelas nos insights de vendas mais organizadas.
     """)
 
 st.divider()  # Adiciona uma linha divisória para separação visual
