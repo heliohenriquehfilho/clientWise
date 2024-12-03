@@ -7,8 +7,6 @@ st.set_page_config(layout="wide")
 
 load_dotenv()
 
-load_dotenv()
-
 # Inicializar o estado de autenticação (antes de qualquer outra coisa)
 if "autenticado" not in st.session_state:
     st.session_state.autenticado = False
