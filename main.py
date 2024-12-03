@@ -78,6 +78,7 @@ if not st.session_state.autenticado:
                 user_id = registrar_usuario(email, senha)
                 if user_id:
                     st.success("Usuário registrado com sucesso!")
+                    st.success("Por Favor confirme o seu email com o link recebido pelo mesmo.")
                 else:
                     st.error("Erro ao registrar usuário. Verifique as informações fornecidas.")
             else:
