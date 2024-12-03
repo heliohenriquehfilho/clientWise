@@ -2,10 +2,10 @@ import streamlit as st
 from supabase import create_client, Client
 from dotenv import load_dotenv
 import os
-from streamlit_cookies_manager import CookieManager
+
+st.set_page_config(layout="wide")
 
 load_dotenv()
-st.set_page_config(layout="wide")
 
 # Inicializar o estado de autenticação (antes de qualquer outra coisa)
 if "autenticado" not in st.session_state:
@@ -31,9 +31,7 @@ except Exception as e:
     print(f"Erro ao criar cliente Supabase: {e}")
     raise
 
-st.title("ClientWise")
-
-cookies = CookieManager()
+st.title("ClientWise v0.0.2")
 
 # Função para registrar usuários
 def registrar_usuario(email, senha):
