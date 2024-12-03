@@ -29,19 +29,19 @@ def renderizar_gerenciador_de_vendas(user_id):
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        if menu_button("Cliente", "📈", "cliente"):
+        if menu_button("Cliente", "👥", "cliente"):
             st.session_state.menu_vendas_header = "Gerenciador de Clientes"
 
     with col2:
-        if menu_button("Produto", "💰", "produto"):
+        if menu_button("Produto", "📦", "produto"):
             st.session_state.menu_vendas_header = "Gerenciador de  Produtos"
 
     with col3:
-        if menu_button("Vendas", "📊", "vendas"):
+        if menu_button("Vendas", "💸", "vendas"):
             st.session_state.menu_vendas_header = "Gerenciador de Vendas"
 
     with col4:
-        if menu_button("Vendedores", "📊", "vendedores"):
+        if menu_button("Vendedores", "👨‍💼", "vendedores"):
             st.session_state.menu_vendas_header = "Gerenciador de Vendedores"
 
     # Divisor para separar o menu do conteúdo
