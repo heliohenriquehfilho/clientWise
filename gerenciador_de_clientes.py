@@ -15,6 +15,7 @@ def renderizar_gerenciador_de_clientes(user_id):
 
     # Carregar clientes do Supabase
     clientes = supabase.table("clientes").select("*").eq("user_id", user_id).execute().data
+    vendas = supabase.table('vendas').select("*").eq("user_id", user_id).execute().data
 
     st.dataframe(clientes, column_order=[
         "nome", "endereco", "email", "bairro", "cidade", 
@@ -76,10 +77,20 @@ def renderizar_gerenciador_de_clientes(user_id):
                 }
                 supabase.table("clientes").update(cliente_atualizado).eq("id", cliente_atual["id"]).execute()
                 st.success("Cliente atualizado com sucesso.")
+                st.rerun()
 
             # Excluir cliente
             if st.button("Excluir Cliente"):
-                supabase.table("clientes").delete().eq("id", cliente_atual["id"]).execute()
-                st.success(f"Cliente '{cliente_nome}' excluído com sucesso.")
+                venda = next(v for v in vendas if v["cliente"] == cliente_nome)
+                if venda:
+                    st.error("Esse cliente tem venda associado, por favor desative o cliente no gerenciador de clientes")
+                    st.error("Esse cliente não poderá ser excluído.")
+                else:
+                    resposta = supabase.table("clientes").delete().eq("nome", cliente_nome).execute()
+                    try:
+                        if resposta.data:
+                            st.success(f"Cliente '{cliente_nome}' excluído com sucesso.")
+                    except Exception as e:
+                        st.error(f"Erro ao excluir o cliente: {e}")
     else:
         st.warning("Nenhum cliente cadastrado.")

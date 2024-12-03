@@ -69,6 +69,8 @@ def renderizar_cadastro_de_venda(user_id):
     valor_total_venda = calcular_valor_total(preco, venda_desconto, venda_quantidade)
     st.write(f"O valor total da venda é: R$ {valor_total_venda:.2f}")
 
+    cliente = next(v for v in clientes if v["nome"] == venda_cliente)
+
     # Validar e salvar venda
     if st.button("Salvar venda"):
         if venda_quantidade > estoque:
@@ -79,6 +81,8 @@ def renderizar_cadastro_de_venda(user_id):
             st.error("Vendedor não contratado na data da venda.")
         elif data_demissao and datetime.strptime(venda_data, "%Y-%m-%d").date() > data_demissao:
             st.error("Vendedor já demitido na data da venda.")
+        elif cliente["ativo"] == False:
+            st.error("Cliente Inativo.")
         else:
             venda = {
                 "user_id": user_id,
