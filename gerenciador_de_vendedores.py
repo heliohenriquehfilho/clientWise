@@ -187,7 +187,7 @@ def renderizar_gerenciador_de_vendedores(user_id):
             st.write(f"Tempo trabalhado: {meses_trabalhados} meses")
 
             # Atualiza o status no Supabase
-            response = supabase.table("vendedores").update({"demissao": data_demissao, "encargos_demissao": total_encargos}).eq("id", vendedor["id"]).execute()
+            response = supabase.table("vendedores").update({"demissao": data_demissao, "encargos": total_encargos}).eq("id", vendedor["id"]).execute()
 
             if response.status_code == 200:
                 st.success(f"Vendedor {vendedor['nome']} demitido com sucesso!")
