@@ -14,20 +14,39 @@ key = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
 def renderizar_gerenciamento_de_vendas(user_id):
-    vendas = obter_dados_tabela("vendas", user_id)
-    st.dataframe(vendas, column_order=["id", "cliente", "produto", "quantidade", "desconto", "data_venda", "pagamento", "vendedor", "valor"])
+    # Função para carregar dados da tabela
+    def carregar_vendas():
+        return obter_dados_tabela("vendas", user_id)
+    
+    vendas = carregar_vendas()
 
-    venda_id = st.selectbox("Selecione o id da venda", [venda["id"] for venda in vendas])
+    if vendas:
+        st.dataframe(vendas, column_order=["id", "cliente", "produto", "quantidade", "desconto", "data_venda", "pagamento", "vendedor", "valor"])
+        
+        venda_id = st.selectbox("Selecione o ID da venda", [venda["id"] for venda in vendas])
+        
+        venda_selecionada = next((venda for venda in vendas if venda["id"] == venda_id), None)
+        
+        if venda_selecionada:
+            st.markdown(f"**Cliente**: {venda_selecionada['cliente']}")
+            st.markdown(f"**Produto**: {venda_selecionada['produto']}")
+            st.markdown(f"**Quantidade**: {venda_selecionada['quantidade']}")
+            st.markdown(f"**Desconto**: {venda_selecionada['desconto']}")
+            st.markdown(f"**Data da Venda**: {venda_selecionada['data_venda']}")
+            st.markdown(f"**Pagamento**: {venda_selecionada['pagamento']}")
+            st.markdown(f"**Vendedor**: {venda_selecionada['vendedor']}")
+            st.markdown(f"**Valor**: {venda_selecionada['valor']}")
+        
+            if st.button("Excluir Venda"):
+                # Excluir venda pelo ID
+                supabase.table("vendas").delete().eq("id", venda_id).execute()
+                st.success(f"Venda '{venda_id}' excluída com sucesso.")
+                
+                # Recarregar dados após a exclusão
+                vendas = carregar_vendas()
+                st.rerun()  # Recarregar a interface para atualizar a lista
+        else:
+            st.warning("Venda selecionada não encontrada.")
+    else:
+        st.info("Nenhuma venda encontrada.")
 
-    st.markdown(f"Cliente: {vendas[venda_id-1]["cliente"]}")
-    st.markdown(f"Produto: {vendas[venda_id-1]["produto"]}")
-    st.markdown(f"Quantidade: {vendas[venda_id-1]["quantidade"]}")
-    st.markdown(f"Desconto: {vendas[venda_id-1]["desconto"]}")
-    st.markdown(f"Data da Venda: {vendas[venda_id-1]["data_venda"]}")
-    st.markdown(f"Pagamento: {vendas[venda_id-1]["pagamento"]}")
-    st.markdown(f"Vendedor: {vendas[venda_id-1]["vendedor"]}")
-    st.markdown(f"Valor: {vendas[venda_id-1]["valor"]}")
-
-    if st.button("Excluir Venda"):
-        supabase.table("vendas").delete().eq("id", venda_id).execute()
-        st.success(f"Venda '{venda_id}' excluído com sucesso.")
