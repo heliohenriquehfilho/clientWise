@@ -3,7 +3,12 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 import os
 
-st.set_page_config(layout="wide")
+st.set_page_config(
+    page_title="ClientWise",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="collapsed"  # Define o menu lateral como recolhido por padrão
+)
 
 load_dotenv()
 
@@ -31,7 +36,25 @@ except Exception as e:
     print(f"Erro ao criar cliente Supabase: {e}")
     raise
 
-st.title("ClientWise v0.0.2")
+st.title("ClientWise v0.0.3 🚀")
+
+with st.expander("📢 Novidades da versão 0.0.3"):
+    st.markdown("""
+    ### 🆕 Novidades e Melhorias
+    - **Novas formas de produto:** Agora é possível cadastrar produtos como **Digital** ou **Físico**.
+    - **Correções de bugs:** Melhoramos a estabilidade do sistema.
+    - **Visualização aprimorada:** Tabelas mais limpas no insight de vendas para facilitar a análise.
+    - **Menu Otimizado:** Navegação do menu mais simples e intuitiva.
+    """)
+
+st.divider()  # Adiciona uma linha divisória para separação visual
+
+# Função para criar botões com ícones e nomes
+def menu_button(label, icon, key):
+    return st.button(
+        f"{icon} {label}", key=key, help=f"Navegar para {label}",
+        use_container_width=True  # Faz os botões ocuparem toda a largura disponível
+    )
 
 # Função para registrar usuários
 def registrar_usuario(email, senha):
@@ -108,15 +131,40 @@ else:
 
     user_id = st.session_state.user_id  # Recupera o user_id da sessão
 
-    menu = st.radio(
-        "Navegação",
-        ["Gerenciador de Vendas", "Gerenciador de Finanças", "Gerenciador de Investimento"],
-        horizontal=True
-    )
-    mapa_funcoes = {
-        "Gerenciador de Vendas": renderizar_gerenciador_de_vendas,
-        "Gerenciador de Investimento": renderizar_gerenciamento_de_investimento,
-        "Gerenciador de Finanças": renderizar_gerenciamento_financeiro
-    }
-    if menu in mapa_funcoes:
-        mapa_funcoes[menu](user_id)
+    # Estado inicial do menu
+    if "menu" not in st.session_state:
+        st.session_state.menu = "Inicio"
+
+    # Layout do menu principal
+    st.title("ClientWise")
+    st.markdown("### Escolha uma área para gerenciar:")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        if menu_button("Gerenciador de Vendas", "📈", "vendas"):
+            st.session_state.menu = "Gerenciador de Vendas"
+
+    with col2:
+        if menu_button("Gerenciador de Finanças", "💰", "financas"):
+            st.session_state.menu = "Gerenciador de Finanças"
+
+    with col3:
+        if menu_button("Gerenciador de Investimentos", "📊", "investimentos"):
+            st.session_state.menu = "Gerenciador de Investimentos"
+
+    # Divisor para separar o menu do conteúdo
+    st.divider()
+
+    # Conteúdo da página selecionada
+    if st.session_state.menu == "Gerenciador de Vendas":
+        st.subheader("Gerenciador de Vendas")
+        renderizar_gerenciador_de_vendas(user_id)
+    elif st.session_state.menu == "Gerenciador de Finanças":
+        st.subheader("Gerenciador de Finanças")
+        renderizar_gerenciamento_financeiro(user_id)
+    elif st.session_state.menu == "Gerenciador de Investimentos":
+        st.subheader("Gerenciador de Investimentos")
+        renderizar_gerenciamento_de_investimento(user_id)
+    else:
+        st.markdown("Bem-vindo ao **ClientWise**! Selecione uma área para começar.")

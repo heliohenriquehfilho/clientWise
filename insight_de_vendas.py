@@ -89,10 +89,43 @@ def renderizar_insight_de_vendas(user_id):
 
     # Tabelas de dados
     st.markdown("Clientes: ")
-    st.dataframe(clientes, use_container_width=True)
+    st.dataframe(
+        clientes,
+        use_container_width=True,
+        column_order=["ativo", "nome", "contato", "idade", "email", "endereco", 
+                    "bairro", "cidade", "estado", "cep", "genero"],
+        column_config={
+            "ativo": "Status Ativo",
+            "nome": "Nome Completo",
+            "contato": "Número de Contato",
+            "idade": "Idade",
+            "email": "E-mail",
+            "endereco": "Endereço",
+            "bairro": "Bairro",
+            "cidade": "Cidade",
+            "estado": "Estado",
+            "cep": "CEP",
+            "genero": "Gênero"
+        }
+    )
 
-    st.markdown("Produtos:")
-    st.dataframe(produtos, use_container_width=True)
+    st.markdown("Produtos: ")
+    st.dataframe(
+        produtos, 
+        use_container_width=True,
+        column_order=["ativo", "nome", "preco", "descricao", 
+                      "quantidade", "custo", "margem_lucro", "tipo"],
+        column_config={
+            "ativo": "Status Produto",
+            "nome": "Produto",
+            "preco": "Preço Unitário",
+            "descricao": "Descrição",
+            "quantidade": "Em Estoque",
+            "custo": "Custo Unitário",
+            "margem_lucro": "Lucro Unitário (%)",
+            "tipo": "Tipo"
+        }
+    )
 
     st.markdown("Vendas: ")
     st.dataframe(vendas, use_container_width=True)
