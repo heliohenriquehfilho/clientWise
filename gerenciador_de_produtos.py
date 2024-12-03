@@ -1,14 +1,9 @@
 import streamlit as st
-import os
-from supabase import create_client, Client
 from dotenv import load_dotenv
+from config_supabase import config_supabase
 
+supabase = config_supabase()
 load_dotenv()
-
-# Configuração do Supabase
-url = os.getenv("SUPABASE_URL")
-key = os.getenv("SUPABASE_KEY")
-supabase: Client = create_client(url, key)
 
 def renderizar_gerenciador_de_produtos(user_id):
     st.header("💼 Gerenciador de Produtos")
@@ -20,13 +15,48 @@ def renderizar_gerenciador_de_produtos(user_id):
     st.dataframe(produtos, column_order=[
         "nome", "preco", "descricao", "quantidade", 
         "ativo", "custo", "margem_lucro"
-    ], )
+    ])
 
     produto_selecionado = {}
 
     if produtos:
         nome_produto = [produto["nome"] for produto in produtos]
         produto_selecionado_nome = st.selectbox("Escolha o produto", nome_produto)
+
+        with st.expander("Campanha de Marketing"):
+
+            campanhas = supabase.table("campanha").select("*").eq("user_id", user_id).execute().data
+
+            campanha = {}
+
+            plataforma = st.text_input("Plataforma de anuncio:")
+            valor = st.number_input("Valor gasto para a campanha:")
+            data_inicio = st.date_input("Data de inicio da campanha").strftime("%Y-%m-%d")
+            produto = st.selectbox("Produto na campanha", nome_produto)
+            if st.button("Lançar campanha de marketing"):
+                if plataforma:
+                    if data_inicio:
+                        if produto:
+                            id_campanha = plataforma + "." + data_inicio + "." + produto
+                if plataforma:
+                    campanha["plataforma"] = plataforma
+                if valor:
+                    campanha["valor"] = valor
+                if data_inicio:
+                    campanha["data_inicio"] = data_inicio
+                if produto:
+                    campanha["produto"] = produto
+                if id_campanha:
+                    campanha["id_campanha"] = id_campanha
+                campanha["user_id"] = user_id
+                
+                try:
+                    supabase.table("campanha").insert(campanha).execute()
+                    st.success("Campanha cadastrada com sucesso!")
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Erro ao salvar a campanha: {e}")
+
 
         for produto in produtos:
             if produto["nome"] == produto_selecionado_nome:
