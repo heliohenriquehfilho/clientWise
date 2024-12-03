@@ -24,7 +24,7 @@ def obter_vendas_totais(vendedor_nome, user_id):
 def calcular_encargos(vendedor):
     """Calcula encargos como FGTS, férias, 13º salário e aviso prévio de um vendedor."""
     data_contratacao = vendedor["contratacao"]
-    data_demissao = datetime.strptime(vendedor["demissao"], "%d-%m-%Y")
+    data_demissao = datetime.strptime(vendedor["demissao"], "%Y-%m-%d")
     tempo_trabalho = relativedelta(data_demissao, data_contratacao)
     meses_trabalhados = tempo_trabalho.years * 12 + tempo_trabalho.months
 
