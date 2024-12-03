@@ -40,6 +40,7 @@ def renderizar_cadastro_de_venda(user_id):
             estoque = produto_selecionado["quantidade"]
             ativo = produto_selecionado["ativo"]
             preco = produto_selecionado["preco"]
+            tipo = produto_selecionado["tipo"]
             venda_quantidade = int(st.number_input("Quantidade de venda", min_value=1, step=1))
     else:
         st.error("Nenhum produto cadastrado.")
@@ -73,8 +74,9 @@ def renderizar_cadastro_de_venda(user_id):
 
     # Validar e salvar venda
     if st.button("Salvar venda"):
-        if venda_quantidade > estoque:
-            st.error(f"Estoque insuficiente. Disponível: {estoque}.")
+        if tipo == "Fisico":
+            if venda_quantidade > estoque:
+                st.error(f"Estoque insuficiente. Disponível: {estoque}.")
         elif ativo is False:
             st.error("Produto inativo.")
         elif datetime.strptime(venda_data, "%Y-%m-%d").date() < data_contratacao:
@@ -97,8 +99,9 @@ def renderizar_cadastro_de_venda(user_id):
             }
             try:
                 supabase.table("vendas").insert(venda).execute()
-                novo_estoque = estoque - venda_quantidade
-                supabase.table("produtos").update({"quantidade": novo_estoque}).eq("id", produto_selecionado["id"]).execute()
+                if tipo == "Fisico":
+                    novo_estoque = estoque - venda_quantidade
+                    supabase.table("produtos").update({"quantidade": novo_estoque}).eq("id", produto_selecionado["id"]).execute()
             
                 st.success("Venda cadastrada com sucesso!")
             except Exception as e:

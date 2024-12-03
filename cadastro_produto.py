@@ -17,7 +17,7 @@ def renderizar_cadastro_de_produto(user_id):
     produto_nome = st.text_input("Nome do Produto")
     produto_descricao = st.text_input("Descrição do Produto")
     produto_valor = st.number_input("Valor do produto")
-    produto_quantidade = st.number_input("Quantidade do produto")
+    produto_tipo = st.selectbox("Qual a forma do produto: ", ["Fisico", "Digital"])
 
     produto = {}
 
@@ -27,8 +27,15 @@ def renderizar_cadastro_de_produto(user_id):
         produto["descricao"] = produto_descricao
     if produto_valor:
         produto["preco"] = produto_valor
-    if produto_quantidade:
-        produto["quantidade"] = int(produto_quantidade)
+    if produto_tipo:
+        if produto_tipo == "Fisico":
+            produto["tipo"] = produto_tipo
+            produto_quantidade = st.number_input("Quantidade do produto")
+            if produto_quantidade:
+                produto["quantidade"] = int(produto_quantidade)
+        elif produto_tipo == "Digital":
+            produto["tipo"] = produto_tipo
+            produto["quantidade"] = 0
 
     # Associar o produto ao user_id
     produto["user_id"] = user_id  # Associar ao usuário logado
