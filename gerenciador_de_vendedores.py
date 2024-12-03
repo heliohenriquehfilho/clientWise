@@ -29,7 +29,7 @@ def calcular_encargos(vendedor):
     tempo_trabalho = relativedelta(data_demissao, data_contratacao)
     meses_trabalhados = tempo_trabalho.years * 12 + tempo_trabalho.months
 
-    salario = vendedor["Salario"]
+    salario = vendedor["salario"]
     fgts = salario * 0.08
     aviso_previo = 30 + (3 * (meses_trabalhados // 12))
     aviso_previo_valor = (salario / 30) * aviso_previo
