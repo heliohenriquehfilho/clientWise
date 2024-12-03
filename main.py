@@ -36,15 +36,12 @@ except Exception as e:
     print(f"Erro ao criar cliente Supabase: {e}")
     raise
 
-st.title("ClientWise v0.0.4 🚀")
+st.title("ClientWise v0.0.5 🚀")
 
-with st.expander("📢 Novidades da versão 0.0.4"):
+with st.expander("📢 Novidades da versão 0.0.5"):
     st.markdown("""
     ### 🆕 Novidades e Melhorias
-    - **Upload cliente por CSV:** opção de subir CSV para input de dados de clientes.
-    - **Tabelas organizadas:** tabelas nos insights de vendas mais organizadas.
-    - **Novo Menu:** novo menu no gerenciador de vendas.
-    - **Bugs Resolvidos:** bugs no gerenciamento de clientes e vendas resolvidos.
+    - **Gerenciamento de Marketing:** Nova opção para criar, gerenciar e encerrar campanhas de marketing.
     """)
 
 st.divider()  # Adiciona uma linha divisória para separação visual
