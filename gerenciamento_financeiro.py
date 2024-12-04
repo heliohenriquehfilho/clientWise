@@ -81,6 +81,7 @@ def insights_financeiros(user_id):
     vendas = obter_dados_tabela("vendas", user_id)
     despesas = obter_dados_tabela("despesas", user_id)
     investimentos = obter_dados_tabela("investimento", user_id)
+    campanhas = obter_dados_tabela("campanha", user_id)
 
     if not vendas:
         st.warning("Não há vendas registradas.")
@@ -104,7 +105,7 @@ def insights_financeiros(user_id):
         "Julho": 7, "Agosto": 8, "Setembro": 9, "Outubro": 10, "Novembro": 11, "Dezembro": 12
     }
 
-    ano = st.number_input("Qual Ano:", min_value=2000, max_value=datetime.today().year, value=datetime.today().year)
+    ano = st.number_input("Qual Ano:", min_value=2000, max_value=datetime.today().year + 10, value=datetime.today().year)
 
     mes_referente = mapas_meses.get(menu_meses, mes_atual)
 
@@ -130,6 +131,14 @@ def insights_financeiros(user_id):
                 })
 
     # Calcular totais de vendas e despesas
+    campanhas_mes_atual = sum(
+        campanha["valor"]
+        for campanha in campanhas
+        if "data_inicio" in campanha and datetime.strptime(campanha["data_inicio"], "%Y-%m-%d").date().month == mes_referente
+        and datetime.strptime(campanha["data_inicio"], "%Y-%m-%d").date().year == ano
+    )
+
+    # Calcular totais de vendas e despesas
     vendas_mes_atual = sum(
         venda["valor"]
         for venda in vendas
@@ -148,8 +157,9 @@ def insights_financeiros(user_id):
     st.markdown(f"Total de vendas no mês de {menu_meses}: R$ {vendas_mes_atual:.2f}")
     st.markdown(f"Total de despesas no mês de {menu_meses}: R$ {despesas_mes_atual:.2f}")
     st.markdown(f"Total de investimentos pagos no mês de {menu_meses}: R$ {investimentos_mes_atual:.2f}")
+    st.markdown(f"Total de campanhas pagos no mês de {menu_meses}: R$ {campanhas_mes_atual:.2f}")
 
-    balanco_mes_atual = vendas_mes_atual - (despesas_mes_atual + investimentos_mes_atual)
+    balanco_mes_atual = vendas_mes_atual - (despesas_mes_atual + investimentos_mes_atual +  campanhas_mes_atual)
     st.markdown(f"Balanço do mês {menu_meses}: R$ {balanco_mes_atual:.2f}")
 
     if vendas:
@@ -177,3 +187,13 @@ def insights_financeiros(user_id):
         df_pagamentos = pd.DataFrame(pagamentos_investimentos)
         st.markdown("Pagamentos de Investimentos:")
         st.dataframe(df_pagamentos, use_container_width=True)
+
+    if campanhas:
+        df_campanhas = pd.DataFrame(campanhas)
+        df_campanhas['data_inicio'] = pd.to_datetime(df_campanhas.get('data_inicio', []), errors='coerce')
+
+        filtro_campanhas = df_campanhas[
+            (df_campanhas['data_inicio'].dt.year == ano) & (df_campanhas['data_inicio'].dt.month == mes_referente)
+        ]
+        st.markdown("Campanhas: ")
+        st.dataframe(filtro_campanhas, use_container_width=True)

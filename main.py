@@ -42,6 +42,11 @@ with st.expander("📢 Novidades da versão 0.0.5"):
     st.markdown("""
     ### 🆕 Novidades e Melhorias
     - **Gerenciamento de Marketing:** Nova opção para criar, gerenciar e encerrar campanhas de marketing.
+    - **Bugs Arrumados:** Arrumado o bug na demissão do vendedor.
+    - **Cadastrar Investimentos:** Arrumado o problema de cadastrar investimento.
+    - **Insights de Finanças Futuros:** Agora têm a opção de ver as contas futuras.
+    - **Insights de Finanças:** Agora valores gastos com marketing estão nas contas de balanço.
+    - **Corrigido Bug Marketing:** Se não tiver campanha cadastrada agora retornar uma mensagem avisando e não erro no código.
     """)
 
 st.divider()  # Adiciona uma linha divisória para separação visual
