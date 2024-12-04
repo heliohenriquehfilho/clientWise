@@ -29,7 +29,7 @@ def calcular_encargos(vendedor):
     tempo_trabalho = relativedelta(data_demissao, data_contratacao)
     meses_trabalhados = tempo_trabalho.years * 12 + tempo_trabalho.months
 
-    salario = vendedor["Salario"]
+    salario = vendedor["salario"]
     fgts = salario * 0.08
     aviso_previo = 30 + (3 * (meses_trabalhados // 12))
     aviso_previo_valor = (salario / 30) * aviso_previo
@@ -167,31 +167,33 @@ def renderizar_gerenciador_de_vendedores(user_id):
 
         # Calcular salário total
         st.write(f"Investimento total em salários: R${salario_total:.2f}")
-
     elif submenu == "Demitir Vendedor" and vendedores:
         vendedor_selecionado = st.selectbox("Selecione o Vendedor", [v["nome"] for v in vendedores])
         vendedor = next(v for v in vendedores if v["nome"] == vendedor_selecionado)
 
         data_demissao = st.date_input("Data de Demissão", datetime.today()).strftime("%Y-%m-%d")
         if st.button("Demitir Vendedor"):
-            vendedor["demissao"] = data_demissao
-            encargos = calcular_encargos(vendedor)
-
-            # Exibe encargos
-            aviso_previo_valor, multa_fgts, ferias_proporcionais, decimo_terceiro_proporcional, total_encargos, meses_trabalhados = encargos
-            st.write(f"Valor do aviso prévio: R${aviso_previo_valor:.2f}")
-            st.write(f"Multa do FGTS (40%): R${multa_fgts:.2f}")
-            st.write(f"Férias Proporcionais: R${ferias_proporcionais:.2f}")
-            st.write(f"13º Salário Proporcional: R${decimo_terceiro_proporcional:.2f}")
-            st.write(f"Total de Encargos: R${total_encargos:.2f}")
-            st.write(f"Tempo trabalhado: {meses_trabalhados} meses")
-
-            # Atualiza o status no Supabase
-            response = supabase.table("vendedores").update({"demissao": data_demissao, "encargos_demissao": total_encargos}).eq("id", vendedor["id"]).execute()
-
-            if response.status_code == 200:
-                st.success(f"Vendedor {vendedor['nome']} demitido com sucesso!")
+            if vendedor['demissao'] != "":
+                st.error("Vendedor Já demitido.")
             else:
-                st.error("Erro ao demitir vendedor.")
+                vendedor["demissao"] = data_demissao
+                encargos = calcular_encargos(vendedor)
+
+                # Exibe encargos
+                aviso_previo_valor, multa_fgts, ferias_proporcionais, decimo_terceiro_proporcional, total_encargos, meses_trabalhados = encargos
+                st.write(f"Valor do aviso prévio: R${aviso_previo_valor:.2f}")
+                st.write(f"Multa do FGTS (40%): R${multa_fgts:.2f}")
+                st.write(f"Férias Proporcionais: R${ferias_proporcionais:.2f}")
+                st.write(f"13º Salário Proporcional: R${decimo_terceiro_proporcional:.2f}")
+                st.write(f"Total de Encargos: R${total_encargos:.2f}")
+                st.write(f"Tempo trabalhado: {meses_trabalhados} meses")
+
+                # Atualiza o status no Supabase
+                response = supabase.table("vendedores").update({"demissao": data_demissao, "encargos": total_encargos}).eq("id", vendedor["id"]).execute()
+                if response:
+                    st.success(f"Vendedor {vendedor['nome']} demitido com sucesso!")
+                    st.rerun()
+                else:
+                    st.error("Erro ao demitir vendedor.")
     else:
         st.warning("Não há vendedores registrados para essa ação.")

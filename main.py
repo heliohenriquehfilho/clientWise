@@ -36,15 +36,17 @@ except Exception as e:
     print(f"Erro ao criar cliente Supabase: {e}")
     raise
 
-st.title("ClientWise v0.0.4 🚀")
+st.title("ClientWise v0.0.5 🚀")
 
-with st.expander("📢 Novidades da versão 0.0.4"):
+with st.expander("📢 Novidades da versão 0.0.5"):
     st.markdown("""
     ### 🆕 Novidades e Melhorias
-    - **Upload cliente por CSV:** opção de subir CSV para input de dados de clientes.
-    - **Tabelas organizadas:** tabelas nos insights de vendas mais organizadas.
-    - **Novo Menu:** novo menu no gerenciador de vendas.
-    - **Bugs Resolvidos:** bugs no gerenciamento de clientes e vendas resolvidos.
+    - **Gerenciamento de Marketing:** Nova opção para criar, gerenciar e encerrar campanhas de marketing.
+    - **Bugs Arrumados:** Arrumado o bug na demissão do vendedor.
+    - **Cadastrar Investimentos:** Arrumado o problema de cadastrar investimento.
+    - **Insights de Finanças Futuros:** Agora têm a opção de ver as contas futuras.
+    - **Insights de Finanças:** Agora valores gastos com marketing estão nas contas de balanço.
+    - **Corrigido Bug Marketing:** Se não tiver campanha cadastrada agora retornar uma mensagem avisando e não erro no código.
     """)
 
 st.divider()  # Adiciona uma linha divisória para separação visual
@@ -61,7 +63,7 @@ def registrar_usuario(email, senha):
     try:
         resposta = supabase.auth.sign_up({
             "email": email,
-            "password": senha
+            "password": senha,
         })
         if resposta.user:
             print("Usuário registrado com sucesso!")

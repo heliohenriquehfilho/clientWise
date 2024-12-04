@@ -8,6 +8,7 @@ from gerenciador_de_clientes import renderizar_gerenciador_de_clientes
 from gerenciador_de_produtos import renderizar_gerenciador_de_produtos
 from gerenciador_de_vendedores import renderizar_gerenciador_de_vendedores
 from gerenciador_de_vendas import renderizar_gerenciamento_de_vendas
+from gerenciador_de_campanhas import renderizar_gerenciador_de_campanhas
 
 if st.session_state.autenticado:
     user_id = st.session_state.get("user_id")
@@ -26,7 +27,7 @@ def renderizar_gerenciador_de_vendas(user_id):
     if "menu_vendas_header" not in st.session_state:
         st.session_state.menu_vendas_header = "Inicio"
 
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4, col5 = st.columns(5)
 
     with col1:
         if menu_button("Cliente", "👥", "cliente"):
@@ -43,6 +44,10 @@ def renderizar_gerenciador_de_vendas(user_id):
     with col4:
         if menu_button("Vendedores", "👨‍💼", "vendedores"):
             st.session_state.menu_vendas_header = "Gerenciador de Vendedores"
+    
+    with col5:
+        if menu_button("Marketing", "📢", "campanha"):
+            st.session_state.menu_vendas_header = "Gerenciador de Campanhas"
 
     # Divisor para separar o menu do conteúdo
     st.divider()
@@ -102,6 +107,10 @@ def renderizar_gerenciador_de_vendas(user_id):
 
     elif st.session_state.menu_vendas_header == "Gerenciador de Vendedores":
         renderizar_gerenciador_de_vendedores(user_id)
+
+    elif st.session_state.menu_vendas_header == "Gerenciador de Campanhas":
+        renderizar_gerenciador_de_campanhas(user_id)
+
     else:
         st.markdown("Bem-vindo ao **ClientWise**! Selecione uma área para começar.")
 
