@@ -45,7 +45,7 @@ def calcular_encargos(vendedor):
 def calcular_salario_total(vendedor):
     """Calcula o salário total considerando os aumentos ao longo do tempo."""
     hoje = datetime.today()
-    salario_total = 0
+    salario_total = 1
     data_anterior = datetime.strptime(vendedor["contratacao"], "%Y-%m-%d")
     salario_atual = vendedor["salario"]
 
@@ -107,6 +107,8 @@ def renderizar_gerenciador_de_vendedores(user_id):
                 st.error("Por favor, preencha todos os campos.")
 
     elif submenu == "Insight Vendedor" and vendedores:
+        st.dataframe(vendedores, column_order=["nome", "idade", "salario", "encargos", "contratacao", "demissao"], use_container_width=True)
+
         vendedor_selecionado = st.selectbox("Selecione o Vendedor", [v["nome"] for v in vendedores])
         vendedor = next(v for v in vendedores if v["nome"] == vendedor_selecionado)
 
@@ -163,8 +165,6 @@ def renderizar_gerenciador_de_vendedores(user_id):
             except Exception as e:
                 st.error(f"Erro ao adicionar aumento: {e}")
 
-
-
         # Calcular salário total
         st.write(f"Investimento total em salários: R${salario_total:.2f}")
     elif submenu == "Demitir Vendedor" and vendedores:
@@ -173,7 +173,7 @@ def renderizar_gerenciador_de_vendedores(user_id):
 
         data_demissao = st.date_input("Data de Demissão", datetime.today()).strftime("%Y-%m-%d")
         if st.button("Demitir Vendedor"):
-            if vendedor['demissao'] != "":
+            if vendedor['demissao'] is not None:
                 st.error("Vendedor Já demitido.")
             else:
                 vendedor["demissao"] = data_demissao
@@ -192,7 +192,6 @@ def renderizar_gerenciador_de_vendedores(user_id):
                 response = supabase.table("vendedores").update({"demissao": data_demissao, "encargos": total_encargos}).eq("id", vendedor["id"]).execute()
                 if response:
                     st.success(f"Vendedor {vendedor['nome']} demitido com sucesso!")
-                    st.rerun()
                 else:
                     st.error("Erro ao demitir vendedor.")
     else:

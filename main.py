@@ -49,6 +49,30 @@ with st.expander("📢 Novidades da versão 0.0.5"):
     - **Corrigido Bug Marketing:** Se não tiver campanha cadastrada agora retornar uma mensagem avisando e não erro no código.
     """)
 
+with st.expander("Sugerir Melhorias/Novas Funções:"):
+    st.markdown("""
+    Esse espaço está aberto para sugestões, aqui você pode reportar bugs, ou sugerir novas funções.
+    Só descrever a sugestão, se for bug avisar em qual aba deu o bug/erro e vamos trabalhar para arrumar o mais rápido.
+""")
+    sugestao_text = st.chat_input("Digite aqui sua mensagem")
+    if sugestao_text:
+        if st.session_state.user_id:
+            sugestao = {
+                "user_id": st.session_state.user_id,
+                "sugestao": sugestao_text
+            }
+            supabase.table("sugestao").insert(sugestao).execute()
+            st.success("Sugestão Cadastrada.")
+            st.rerun()
+        else:
+            sugestao={
+                "user_id": "",
+                "sugestao": sugestao_text
+            }
+            supabase.table("sugestao").insert(sugestao).execute()
+            st.success("Sugestão Cadastrada.")
+            st.rerun()
+
 st.divider()  # Adiciona uma linha divisória para separação visual
 
 # Função para criar botões com ícones e nomes

@@ -15,11 +15,7 @@ def renderizar_gerenciador_de_produtos(user_id):
     st.dataframe(produtos, column_order=[
         "nome", "preco", "descricao", "quantidade", 
         "ativo", "custo", "margem_lucro"
-<<<<<<< HEAD
     ], use_container_width=True)
-=======
-    ])
->>>>>>> 3e7301ef33642e52945c54849b812b25b1035403
 
     produto_selecionado = {}
 
@@ -30,7 +26,6 @@ def renderizar_gerenciador_de_produtos(user_id):
         with st.expander("Campanha de Marketing"):
 
             campanhas = supabase.table("campanha").select("*").eq("user_id", user_id).execute().data
-
             campanha = {}
 
             plataforma = st.text_input("Plataforma de anuncio:")
@@ -72,14 +67,13 @@ def renderizar_gerenciador_de_produtos(user_id):
                 c_barras = produto.get("codigo_barras")
                 custo = produto.get("custo")
                 margem_lucro = produto.get("margem_lucro", 0)
-                imagem = produto.get("codigo_barras_imagem")
 
         # Preencher campos com os dados existentes
         produto_nome = st.text_input("Nome do produto", value=nome)
         produto_preco = st.number_input("Preço do Produto", value=preco)
         produto_descricao = st.text_input("Descrição", value=descricao)
         produto_quantidade = st.number_input("Quantidade do produto", value=quantidade)
-        produto_ativo = st.checkbox("Produto Ativo", value=ativo)
+        produto_ativo = st.toggle("Produto Ativo", value=ativo)
         produto_codigo_barras = st.write("Código de barras:", c_barras)
         produto_custo = st.number_input("Custo do produto", value=custo)
 
