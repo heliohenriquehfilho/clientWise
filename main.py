@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 from criar_dados_base import criar_dados_base
 import os
 
+from langdetect import detect
+import requests
+
 st.set_page_config(
     page_title="ClientWise",
     page_icon="📊",
@@ -12,6 +15,59 @@ st.set_page_config(
 )
 
 load_dotenv()
+
+# Idiomas suportados
+translations = {
+    "Português": {
+        "title": "ClientWise",
+        "news_header": "📢 Novidades da versão 0.1.0 🚀",
+        "news_content": """
+        ### 🆕 Novidades e Melhorias
+        -> **Dados Base:** Dados base de exemplo para novos usuários. \n
+        -> **Exportação de dados:** Exportação de tabelas para csv. \n
+        -> **Aba de Sugestão:** Sugestões ou reclamações de usuários (aqui em baixo).
+        """,
+        "suggestion_header": "Sugerir Melhorias/Novas Funções:",
+        "suggestion_content": """
+        Esse espaço está aberto para sugestões, aqui você pode reportar bugs, ou sugerir novas funções.
+        Só descrever a sugestão, se for bug avisar em qual aba deu o bug/erro e vamos trabalhar para arrumar o mais rápido.
+        """,
+        "suggestion_input": "Digite aqui sua mensagem",
+        "success_message": "Sugestão Cadastrada.",
+        "auth_section": "Autenticação",
+        "login": "Login",
+        "register": "Registrar",
+        "email": "Email",
+        "password": "Senha",
+        "logout": "Sair",
+    },
+    "English": {
+        "title": "ClientWise",
+        "news_header": "📢 Version 0.1.0 News 🚀",
+        "news_content": """
+        ### 🆕 What's New
+        -> **Base Data:** Sample data for new users. \n
+        -> **Data Export:** Export tables to CSV. \n
+        -> **Suggestions Tab:** User suggestions or complaints (below).
+        """,
+        "suggestion_header": "Suggest Improvements/New Features:",
+        "suggestion_content": """
+        This space is open for suggestions. Here you can report bugs or suggest new features.
+        Just describe the suggestion. If it's a bug, let us know in which tab it occurred, and we'll work to fix it quickly.
+        """,
+        "suggestion_input": "Type your message here",
+        "success_message": "Suggestion Registered.",
+        "auth_section": "Authentication",
+        "login": "Login",
+        "register": "Register",
+        "email": "Email",
+        "password": "Password",
+        "logout": "Logout",
+    },
+}
+
+st.sidebar.selectbox("🌐 Idioma / Language", ["Português", "English"], 
+                     key="language")
 
 # Inicializar o estado de autenticação (antes de qualquer outra coisa)
 if "autenticado" not in st.session_state:
@@ -37,39 +93,41 @@ except Exception as e:
     print(f"Erro ao criar cliente Supabase: {e}")
     raise
 
-st.title("ClientWise")
+# Função para obter o texto traduzido
+def t(key):
+    return translations[st.session_state.language].get(key, key)
 
-with st.expander("📢 Novidades da versão 0.1.0 🚀"):
-    st.markdown("""
-    ### 🆕 Novidades e Melhorias
-    -> **Dados Base:** Dados base de exemplo para novos usuários. \n
-    -> **Exportação de dados:** Exportação de tabelas para csv. \n
-    -> **Aba de Sugestão:** Sugestões ou reclamações de usuários (aqui em baixo).
-    """)
+# Detectando o idioma automaticamente
+def detectar_idioma():
+    try:
+        # Detecta o idioma do navegador através do cabeçalho `Accept-Language`
+        headers = {'Accept-Language': 'en-US,en;q=0.9,pt;q=0.8'}
+        response = requests.get("https://httpbin.org/user-agent", headers=headers)
+        user_language = response.json()['headers']['Accept-Language']
+        # Retorna o primeiro idioma detectado ou inglês por padrão
+        if "pt" in user_language:
+            return "pt"
+        return "en"
+    except:
+        return "en"  # Se houver erro, assume-se inglês como fallback
 
-with st.expander("Sugerir Melhorias/Novas Funções:"):
-    st.markdown("""
-    Esse espaço está aberto para sugestões, aqui você pode reportar bugs, ou sugerir novas funções.
-    Só descrever a sugestão, se for bug avisar em qual aba deu o bug/erro e vamos trabalhar para arrumar o mais rápido.
-    """)
-    sugestao_text = st.chat_input("Digite aqui sua mensagem")
+st.title(t("title"))
+
+# Novidades
+with st.expander(t("news_header")):
+    st.markdown(t("news_content"))
+
+with st.expander(t("suggestion_header")):
+    st.markdown(t("suggestion_content"))
+    sugestao_text = st.chat_input(t("suggestion_input"))
     if sugestao_text:
-        if st.session_state.user_id:
-            sugestao = {
-                "user_id": st.session_state.user_id,
-                "sugestao": sugestao_text
-            }
-            supabase.table("sugestao").insert(sugestao).execute()
-            st.success("Sugestão Cadastrada.")
-            st.rerun()
-        else:
-            sugestao={
-                "user_id": "",
-                "sugestao": sugestao_text
-            }
-            supabase.table("sugestao").insert(sugestao).execute()
-            st.success("Sugestão Cadastrada.")
-            st.rerun()
+        sugestao = {
+            "user_id": st.session_state.user_id or "",
+            "sugestao": sugestao_text
+        }
+        supabase.table("sugestao").insert(sugestao).execute()
+        st.success(t("success_message"))
+        st.rerun()
 
 st.divider()  # Adiciona uma linha divisória para separação visual
 
@@ -118,11 +176,11 @@ def autenticar_usuario(email, senha):
 if not st.session_state.autenticado:
     menu_login = st.sidebar.radio("Autenticação", ["Login", "Registrar"])
 
-    if menu_login == "Registrar":
-        st.subheader("Registrar")
-        email = st.text_input("Email")
-        senha = st.text_input("Senha", type="password")
-        if st.button("Registrar"):
+    if menu_login == t("register"):
+        st.subheader(t("register"))
+        email = st.text_input(t("email"))
+        senha = st.text_input(t("password"), type="password")
+        if st.button(t("register")):
             if email and senha:
                 user_id = registrar_usuario(email, senha)
                 if user_id:
@@ -133,12 +191,12 @@ if not st.session_state.autenticado:
             else:
                 st.error("Preencha todos os campos.")
 
-    elif menu_login == "Login":
-        st.subheader("Login")
-        email = st.text_input("Email")
-        senha = st.text_input("Senha", type="password")
+    elif menu_login == t("login"):
+        st.subheader(t("login"))
+        email = st.text_input(t("email"))
+        senha = st.text_input(t("password"), type="password")
+        if st.button(t("login")):
 
-        if st.button("Login"):
             user_id = autenticar_usuario(email, senha)
             if user_id:
                 st.session_state.autenticado = True  # Atualiza o estado de autenticação
@@ -148,10 +206,9 @@ if not st.session_state.autenticado:
             else:
                 st.error("Email ou senha inválidos.")
 else:
-    # Exibir o menu principal após o login
-    if st.sidebar.button("Sair"):
+    # Menu principal
+    if st.sidebar.button(t("logout")):
         st.session_state.autenticado = False
-        st.session_state.user_id = None
         st.rerun()
 
     user_id = st.session_state.user_id  # Recupera o user_id da sessão
