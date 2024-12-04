@@ -63,7 +63,7 @@ def registrar_usuario(email, senha):
     try:
         resposta = supabase.auth.sign_up({
             "email": email,
-            "password": senha
+            "password": senha,
         })
         if resposta.user:
             print("Usuário registrado com sucesso!")
