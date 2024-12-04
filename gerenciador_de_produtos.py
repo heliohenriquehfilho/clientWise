@@ -20,7 +20,7 @@ def renderizar_gerenciador_de_produtos(user_id):
     st.dataframe(produtos, column_order=[
         "nome", "preco", "descricao", "quantidade", 
         "ativo", "custo", "margem_lucro"
-    ], )
+    ], use_container_width=True)
 
     produto_selecionado = {}
 
@@ -87,7 +87,10 @@ def renderizar_gerenciador_de_produtos(user_id):
 
         # Excluir produto
         if st.button("Excluir Produto"):
-            venda = next(v for v in vendas if v["produto"] == produto_selecionado_nome)
+            try:
+                venda = next(v for v in vendas if v["produto"] == produto_selecionado_nome)
+            except:
+                venda = ""
             if venda:
                 st.error("Esse produto tem venda associado, por favor desative o produto no gerenciador de produto")
                 st.error("Esse produto não poderá ser excluído.")
@@ -96,6 +99,7 @@ def renderizar_gerenciador_de_produtos(user_id):
                 try:
                     if resposta.data:
                         st.success(f"Produto '{produto_selecionado_nome}' excluído com sucesso.")
+                        st.rerun()
                 except Exception as e:
                     st.error(f"Erro ao excluir o produto: {e}")
     else:
