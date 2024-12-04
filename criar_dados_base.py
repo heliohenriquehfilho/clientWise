@@ -38,6 +38,9 @@ def vendas_base(user_id):
     supabase.table("vendas").insert(venda).execute()
 
 def produtos_base(user_id):
+
+    lucro = ((29.90 - 9.90) / 9.90)
+    print(lucro)
     
     produto = {	
         'nome': "Produto Exemplo",
@@ -45,9 +48,9 @@ def produtos_base(user_id):
         'descricao': "Produto de Exemplo para Novos Usuários",
         'quantidade': 2,
         'ativo': True,
-        'codigo_barras': "",
+        'codigo_barras': 0,
         'custo': 9.90,
-        'margem_lucro': ((29.90 - 9.90) / 9.90),
+        'margem_lucro': lucro,
         'user_id': user_id,
         'tipo': "Fisico"
     }
@@ -70,3 +73,9 @@ def vendedor_base(user_id):
     }
 
     supabase.table("vendedores").insert(vendedor).execute()
+
+def criar_dados_base(user_id):
+    cliente_base(user_id)
+    vendas_base(user_id)
+    produtos_base(user_id)
+    vendedor_base(user_id)

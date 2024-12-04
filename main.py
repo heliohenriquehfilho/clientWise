@@ -1,6 +1,7 @@
 import streamlit as st
 from supabase import create_client, Client
 from dotenv import load_dotenv
+from criar_dados_base import criar_dados_base
 import os
 
 st.set_page_config(
@@ -36,24 +37,21 @@ except Exception as e:
     print(f"Erro ao criar cliente Supabase: {e}")
     raise
 
-st.title("ClientWise v0.0.5 🚀")
+st.title("ClientWise")
 
-with st.expander("📢 Novidades da versão 0.0.5"):
+with st.expander("📢 Novidades da versão 0.1.0 🚀"):
     st.markdown("""
     ### 🆕 Novidades e Melhorias
-    - **Gerenciamento de Marketing:** Nova opção para criar, gerenciar e encerrar campanhas de marketing.
-    - **Bugs Arrumados:** Arrumado o bug na demissão do vendedor.
-    - **Cadastrar Investimentos:** Arrumado o problema de cadastrar investimento.
-    - **Insights de Finanças Futuros:** Agora têm a opção de ver as contas futuras.
-    - **Insights de Finanças:** Agora valores gastos com marketing estão nas contas de balanço.
-    - **Corrigido Bug Marketing:** Se não tiver campanha cadastrada agora retornar uma mensagem avisando e não erro no código.
+    -> **Dados Base:** Dados base de exemplo para novos usuários. \n
+    -> **Exportação de dados:** Exportação de tabelas para csv. \n
+    -> **Aba de Sugestão:** Sugestões ou reclamações de usuários (aqui em baixo).
     """)
 
 with st.expander("Sugerir Melhorias/Novas Funções:"):
     st.markdown("""
     Esse espaço está aberto para sugestões, aqui você pode reportar bugs, ou sugerir novas funções.
     Só descrever a sugestão, se for bug avisar em qual aba deu o bug/erro e vamos trabalhar para arrumar o mais rápido.
-""")
+    """)
     sugestao_text = st.chat_input("Digite aqui sua mensagem")
     if sugestao_text:
         if st.session_state.user_id:
@@ -91,6 +89,7 @@ def registrar_usuario(email, senha):
         })
         if resposta.user:
             print("Usuário registrado com sucesso!")
+            criar_dados_base(resposta.user.id)
             return resposta.user.id  # Retorna o user_id
         else:
             print(f"Erro ao registrar usuário: {resposta}")
