@@ -44,13 +44,13 @@ def renderizar_cadastro_cliente(user_id):
             cliente_endereco = st.text_input("Endereço do Cliente")
             cliente_email = st.text_input("Email do Cliente")
 
-            if cliente_nome:
+            if cliente_nome.strip() != "":
                 cliente["nome"] = cliente_nome
-            if cliente_contato:
+            if cliente_contato.strip() != "":
                 cliente["contato"] = cliente_contato
-            if cliente_endereco:
+            if cliente_endereco.strip() != "":
                 cliente["endereco"] = cliente_endereco
-            if cliente_email:
+            if cliente_email.strip() != "":
                 cliente["email"] = cliente_email
             
             if st.button("Cadastrar Cliente"):
