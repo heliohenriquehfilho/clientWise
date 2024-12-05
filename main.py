@@ -17,9 +17,9 @@ st.set_page_config(
 
 load_dotenv()
 
-# Função para validar email
 def is_valid_email(email):
-    email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$'
+    # Padrão atualizado para aceitar domínios mais longos como .gov.br
+    email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})*$'
     return re.match(email_regex, email) is not None
 
 # Idiomas suportados
@@ -159,7 +159,7 @@ def registrar_usuario(email, senha):
             print(f"Erro ao registrar usuário: {resposta}")
             return None
     except Exception as e:
-        print(f"Erro ao registrar usuário: {e}")
+        st.error(f"Erro ao registrar usuário: {e}")
         return None
 
 # Função para autenticar usuários
