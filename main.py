@@ -3,6 +3,7 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 from criar_dados_base import criar_dados_base
 import os
+import re
 
 st.set_page_config(
     page_title="ClientWise",
@@ -12,6 +13,11 @@ st.set_page_config(
 )
 
 load_dotenv()
+
+# Função para validar email
+def is_valid_email(email):
+    email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$'
+    return re.match(email_regex, email) is not None
 
 # Inicializar o estado de autenticação (antes de qualquer outra coisa)
 if "autenticado" not in st.session_state:
@@ -39,7 +45,7 @@ except Exception as e:
 
 st.title("ClientWise")
 
-with st.expander("📢 Novidades da versão 0.1.0 🚀"):
+with st.expander("📢 Novidades da versão 0.1.1 🚀"):
     st.markdown("""
     ### 🆕 Novidades e Melhorias
     -> **Dados Base:** Dados base de exemplo para novos usuários. \n
@@ -123,7 +129,9 @@ if not st.session_state.autenticado:
         email = st.text_input("Email")
         senha = st.text_input("Senha", type="password")
         if st.button("Registrar"):
-            if email and senha:
+            if not is_valid_email(email):
+                st.error("Email inválido. Certifique-se de incluir um domínio válido, como '.com'.")
+            elif email and senha:
                 user_id = registrar_usuario(email, senha)
                 if user_id:
                     st.success("Usuário registrado com sucesso!")
