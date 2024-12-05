@@ -43,14 +43,14 @@ def renderizar_gerenciador_de_clientes(user_id):
             estado = cliente_atual.get("estado", "")
             cep = cliente_atual.get("cep", "")
             ativo = cliente_atual.get("ativo", False)
-            genero = cliente_atual.get("genero", "Masculino")
+            genero = cliente_atual.get("genero", None)
             cliente_id = cliente_atual.get("client__c", 0)
             data_nascimento_valor = cliente_atual.get("data_nascimento")
 
             # Verificar se o gênero do cliente está na lista de opções
-            genero_opcoes = ["Masculino", "Feminino", "Não Binário"]
+            genero_opcoes = ["Masculino", "Feminino", "Não Binário", None]
             if genero not in genero_opcoes:
-                genero = "Masculino"  # Valor padrão caso o gênero não esteja na lista
+                genero = "" # Valor padrão caso o gênero não esteja na lista
 
             # Formulário para edição do cliente
             # Formulário para edição do cliente
