@@ -52,13 +52,22 @@ def renderizar_cadastro_cliente(user_id):
                 cliente["endereco"] = cliente_endereco
             if cliente_email:
                 cliente["email"] = cliente_email
-
+            
             if st.button("Cadastrar Cliente"):
                 if cliente_nome and cliente_contato and cliente_endereco and cliente_email:
                     try:
-                        resposta = supabase.table("clientes").select("nome").filter("nome", "eq", cliente_nome).filter("user_id", "eq", user_id).execute()
+                        # Verifica duplicação por todos os campos
+                        resposta = supabase.table("clientes")\
+                            .select("id")\
+                            .filter("nome", "eq", cliente_nome)\
+                            .filter("contato", "eq", cliente_contato)\
+                            .filter("endereco", "eq", cliente_endereco)\
+                            .filter("email", "eq", cliente_email)\
+                            .filter("user_id", "eq", user_id)\
+                            .execute()
+                        
                         if resposta.data:
-                            st.error("Já existe um cliente com esse nome associado a este usuário.")
+                            st.error("Já existe um cliente com essas informações cadastradas.")
                         else:
                             cliente["user_id"] = user_id
                             supabase.table("clientes").insert(cliente).execute()
@@ -109,13 +118,21 @@ def renderizar_cadastro_cliente(user_id):
 
                     # Exibir os dados que estão sendo enviados ao Supabase para depuração
                     # st.write(f"Enviando dados: {cliente}")
-
                     try:
-                        # Verificar se o cliente já existe
-                        resposta = supabase.table("clientes").select("nome").filter("nome", "eq", cliente["nome"]).filter("user_id", "eq", user_id).execute()
+                        # Verificar se o cliente já existe (por todos os campos)
+                        resposta = supabase.table("clientes")\
+                            .select("id")\
+                            .filter("nome", "eq", cliente["nome"])\
+                            .filter("contato", "eq", cliente["contato"])\
+                            .filter("endereco", "eq", cliente["endereco"])\
+                            .filter("email", "eq", cliente["email"])\
+                            .filter("user_id", "eq", user_id)\
+                            .execute()
+                        
                         if resposta.data:
                             duplicados.append(cliente['nome'])  # Adicionar cliente duplicado à lista
                         else:
+                            cliente["client__c"] = f"client-{pd.Timestamp.now().timestamp()}"  # Gera um ID único
                             resposta_insert = supabase.table("clientes").insert(cliente).execute()
                             if resposta_insert.status_code != 201:
                                 erros.append(f"Erro ao salvar {cliente['nome']}: {resposta_insert}")

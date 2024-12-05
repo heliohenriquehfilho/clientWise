@@ -26,12 +26,13 @@ def is_valid_email(email):
 translations = {
     "Português": {
         "title": "ClientWise",
-        "news_header": "📢 Novidades da versão 0.1.1 🚀",
+        "news_header": "📢 Novidades da versão 0.1.2 🚀",
         "news_content": """
         ### 🆕 Novidades e Melhorias
         -> **Dados Base:** Dados base de exemplo para novos usuários. \n
         -> **Exportação de dados:** Exportação de tabelas para csv. \n
-        -> **Aba de Sugestão:** Sugestões ou reclamações de usuários (aqui em baixo).
+        -> **Aba de Sugestão:** Sugestões ou reclamações de usuários (aqui em baixo). \n
+        -> **Bugs Arrumados**.
         """,
         "suggestion_header": "Sugerir Melhorias/Novas Funções:",
         "suggestion_content": """
@@ -49,12 +50,13 @@ translations = {
     },
     "English": {
         "title": "ClientWise",
-        "news_header": "📢 Version 0.1.1 News 🚀",
+        "news_header": "📢 Version 0.1.2 News 🚀",
         "news_content": """
         ### 🆕 What's New
         -> **Base Data:** Sample data for new users. \n
         -> **Data Export:** Export tables to CSV. \n
-        -> **Suggestions Tab:** User suggestions or complaints (below).
+        -> **Suggestions Tab:** User suggestions or complaints (below). \n
+        -> **Fixed Bugs.**
         """,
         "suggestion_header": "Suggest Improvements/New Features:",
         "suggestion_content": """
