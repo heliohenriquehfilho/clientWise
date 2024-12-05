@@ -26,7 +26,7 @@ def is_valid_email(email):
 translations = {
     "Português": {
         "title": "ClientWise",
-        "news_header": "📢 Novidades da versão 0.1.3 🚀",
+        "news_header": "📢 Novidades da versão 0.1.4 🚀",
         "news_content": """
         ### 🆕 Novidades e Melhorias
         -> **Dados Base:** Dados base de exemplo para novos usuários. \n
@@ -50,7 +50,7 @@ translations = {
     },
     "English": {
         "title": "ClientWise",
-        "news_header": "📢 Version 0.1.3 News 🚀",
+        "news_header": "📢 Version 0.1.4 News 🚀",
         "news_content": """
         ### 🆕 What's New
         -> **Base Data:** Sample data for new users. \n

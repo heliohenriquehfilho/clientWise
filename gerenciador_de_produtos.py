@@ -65,7 +65,7 @@ def renderizar_gerenciador_de_produtos(user_id):
                 quantidade = produto.get("quantidade")
                 ativo = produto.get("ativo", True)
                 c_barras = produto.get("codigo_barras")
-                custo = produto.get("custo")
+                custo = float(produto.get("custo"))
                 margem_lucro = produto.get("margem_lucro", 0)
 
         # Preencher campos com os dados existentes
@@ -75,7 +75,7 @@ def renderizar_gerenciador_de_produtos(user_id):
         produto_quantidade = st.number_input("Quantidade do produto", value=quantidade)
         produto_ativo = st.toggle("Produto Ativo", value=ativo)
         produto_codigo_barras = st.write("Código de barras:", c_barras)
-        produto_custo = st.number_input("Custo do produto", value=custo)
+        produto_custo = st.number_input("Custo do produto", value=custo, step=0.01)
 
         try:
             margem_lucro = (produto_preco - produto_custo) / produto_custo
@@ -108,6 +108,7 @@ def renderizar_gerenciador_de_produtos(user_id):
                 resposta = supabase.table("produtos").update(produto_selecionado).eq("nome", produto_selecionado_nome).execute()
                 if resposta.data:
                     st.success("Produto atualizado com sucesso!")
+                    st.rerun()
                 else:
                     st.error(f"Erro ao atualizar produto: {resposta.error_message}")
             else:
