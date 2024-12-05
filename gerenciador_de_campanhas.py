@@ -46,33 +46,37 @@ def renderizar_gerenciador_de_campanhas(user_id):
     if campanhas:
         df = pd.DataFrame(campanhas)
 
-        if df["encerrada"]:
-            campanha_ativa = df[df["encerrada"] != True]
-            campanha_encerrada = df[df["encerrada"] == True]
+        campanha_ativa = df[df["encerrada"] != True]
+        campanha_encerrada = df[df["encerrada"] == True]
 
-            st.markdown("Campanhas Ativas: ")
-            st.dataframe(campanha_ativa, **params_ativas)
+        st.markdown("Campanhas Ativas: ")
+        st.dataframe(campanha_ativa, **params_ativas)
 
-            id_campanha = [campanha["id_campanha"] for campanha in campanhas if campanha["encerrada"] != True]
-            campanha_selecionada = st.selectbox("Selecione a Campanha: ", id_campanha)
+        id_campanha = [campanha["id_campanha"] for campanha in campanhas if campanha["encerrada"] != True]
+        campanha_selecionada = st.selectbox("Selecione a Campanha: ", id_campanha)
 
-            campanha_atual = next((campanha for campanha in campanhas if campanha["id_campanha"] == campanha_selecionada), None)
+        campanha_atual = next((campanha for campanha in campanhas if campanha["id_campanha"] == campanha_selecionada), None)
 
-            if campanha_atual:
-                st.markdown(f"**Produto:** {campanha_atual.get('produto')}")
-                st.markdown(f"**Plataforma:** {campanha_atual.get('plataforma')}")
-                st.markdown(f"**Data de Início:** {campanha_atual.get('data_inicio')}")
+        if campanha_atual:
+            st.markdown(f"**Produto:** {campanha_atual.get('produto')}")
+            st.markdown(f"**Plataforma:** {campanha_atual.get('plataforma')}")
+            st.markdown(f"**Data de Início:** {campanha_atual.get('data_inicio')}")
 
-                # Encerrar campanha
-                with st.popover("Encerrar a Campanha"):
-                    st.markdown("### Encerrar Campanha")
-                    custo_por_clic = st.number_input("Qual o custo por clique:", min_value=0.0, step=0.01)
-                    audiencia = st.number_input("Qual a audiência:", min_value=0, step=1)
-                    data_fim = st.date_input("Data de fim da campanha").strftime("%Y-%m-%d")
+            # Encerrar campanha
+            with st.popover("Encerrar a Campanha"):
+                st.markdown("### Encerrar Campanha")
+                custo_por_clic = st.number_input("Qual o custo por clique:", min_value=0.0, step=0.01)
+                audiencia = st.number_input("Qual a audiência:", min_value=0, step=1)
+                data_fim = st.date_input("Data de fim da campanha").strftime("%Y-%m-%d")
 
-                    if st.button("Confirmar Encerramento"):
+                if st.button("Confirmar Encerramento"):
+                    # Verifica no banco de dados se a campanha já foi encerrada
+                    status_campanha = supabase.table("campanha").select("encerrada").eq("id_campanha", campanha_atual["id_campanha"]).execute().data
+                    if status_campanha and status_campanha[0]["encerrada"]:
+                        st.error("Campanha já encerrada.")
+                        st.rerun()
+                    else:
                         if custo_por_clic > 0 and audiencia > 0:
-
                             quantidade_vendas, valor_total, quantidade_vendas_fora_periodo = obter_aumento_vendas(
                                 user_id, campanha_atual["produto"], campanha_atual["data_inicio"], data_fim
                             )
@@ -90,7 +94,7 @@ def renderizar_gerenciador_de_campanhas(user_id):
                                 "aumento_vendas": aumento_vendas,
                                 "renda_total_gerada": valor_total
                             }
-                            resposta = supabase.table("campanha").update(atualizacao).eq("id_campanha", campanha_selecionada).execute()
+                            resposta = supabase.table("campanha").update(atualizacao).eq("id_campanha", campanha_atual["id_campanha"]).execute()
                             if resposta.data:
                                 st.success("Campanha encerrada com sucesso.")
                                 st.rerun()
@@ -99,10 +103,9 @@ def renderizar_gerenciador_de_campanhas(user_id):
                         else:
                             st.error("Preencha todos os campos corretamente.")
 
-            # Exibe campanhas encerradas
-            st.markdown("### Campanhas Encerradas:")
-            st.dataframe(campanha_encerrada, **params_encerrada)
-        else:
-            pass
+        # Exibe campanhas encerradas
+        st.markdown("### Campanhas Encerradas:")
+        st.dataframe(campanha_encerrada, **params_encerrada)
     else:
         st.warning("Nenhuma Campanha de Marketing Registrada.")
+

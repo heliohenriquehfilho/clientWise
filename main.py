@@ -20,7 +20,7 @@ load_dotenv()
 translations = {
     "Português": {
         "title": "ClientWise",
-        "news_header": "📢 Novidades da versão 0.1.0 🚀",
+        "news_header": "📢 Novidades da versão 0.1.1 🚀",
         "news_content": """
         ### 🆕 Novidades e Melhorias
         -> **Dados Base:** Dados base de exemplo para novos usuários. \n
@@ -43,7 +43,7 @@ translations = {
     },
     "English": {
         "title": "ClientWise",
-        "news_header": "📢 Version 0.1.0 News 🚀",
+        "news_header": "📢 Version 0.1.1 News 🚀",
         "news_content": """
         ### 🆕 What's New
         -> **Base Data:** Sample data for new users. \n
