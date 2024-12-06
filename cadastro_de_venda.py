@@ -83,7 +83,7 @@ def renderizar_cadastro_de_venda(user_id):
 
     # Outros detalhes da venda
     venda_data = st.date_input("Data da Compra").strftime("%Y-%m-%d")
-    venda_pagamento = st.selectbox("Formato de pagamento", ["Crédito", "Débito", "Pix", "Dinheiro"])
+    venda_pagamento = st.selectbox("Formato de pagamento", ["Crédito", "Débito", "Pix", "Dinheiro", "Boleto"])
 
     # Calcular valor total
     valor_total_venda = sum([calcular_valor_total(produto["preco"], produto["desconto"], produto["quantidade"]) for produto in produtos_lista])
