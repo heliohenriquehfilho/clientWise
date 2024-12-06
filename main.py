@@ -26,12 +26,12 @@ def is_valid_email(email):
 translations = {
     "Português": {
         "title": "ClientWise",
-        "news_header": "📢 Novidades da versão 0.1.4 🚀",
+        "news_header": "📢 Novidades da versão 0.2.0 🚀",
         "news_content": """
         ### 🆕 Novidades e Melhorias
-        -> **Dados Base:** Dados base de exemplo para novos usuários. \n
-        -> **Exportação de dados:** Exportação de tabelas para csv. \n
-        -> **Aba de Sugestão:** Sugestões ou reclamações de usuários (aqui em baixo). \n
+        -> **Excluir Clientes em Massa:** Selecionar vários clientes para excluir. \n
+        -> **Vendas de Multiplos Produtos:** selecionar vários produtos para uma venda só. \n
+        -> **Exclusão de Campanhas:** Habilidade de excluir campanhas feitas por engano. \n
         -> **Bugs Arrumados**.
         """,
         "suggestion_header": "Sugerir Melhorias/Novas Funções:",
@@ -50,12 +50,12 @@ translations = {
     },
     "English": {
         "title": "ClientWise",
-        "news_header": "📢 Version 0.1.4 News 🚀",
+        "news_header": "📢 Version 0.2.0 News 🚀",
         "news_content": """
         ### 🆕 What's New
-        -> **Base Data:** Sample data for new users. \n
-        -> **Data Export:** Export tables to CSV. \n
-        -> **Suggestions Tab:** User suggestions or complaints (below). \n
+        -> **Mass Delete Clients:** Select multiple clients to delete. \n
+        -> **Multiple products sales:** Select multiple products in one sale. \n
+        -> **Delete Campaings:** You can delete marketing campaings created by mistake. \n
         -> **Fixed Bugs.**
         """,
         "suggestion_header": "Suggest Improvements/New Features:",
@@ -130,7 +130,7 @@ with st.expander(t("suggestion_header")):
     sugestao_text = st.chat_input(t("suggestion_input"))
     if sugestao_text:
         sugestao = {
-            "user_id": st.session_state.user_id or "",
+            "user_id": st.session_state.user_id or None,
             "sugestao": sugestao_text
         }
         supabase.table("sugestao").insert(sugestao).execute()

@@ -14,51 +14,139 @@ supabase: Client = create_client(url, key)
 
 from obter_dados_tabela import obter_dados_tabela
 
+translations = {
+    "Português": {
+        "title": "Financeiro",
+        "menu_register_expense": "Cadastrar Despesa",
+        "menu_financial_insights": "Insights Financeiros",
+        "register_expense": "Aba de Despesas",
+        "select_expense": "Selecione a despesa",
+        "water_supplier": "Fornecedor de Àgua",
+        "electricity_supplier": "Fornecedor de Luz",
+        "internet_supplier": "Fornecedor de Internet",
+        "supplier": "Fornecedor",
+        "bill": "Boleto",
+        "salary_payment": "Pagamento de Funcionário",
+        "expense_value": "Valor da conta",
+        "payment_date": "Data do pagamento",
+        "payment_method": "Forma de pagamento",
+        "payment_method_options": ["Débito", "Débito Automático", "Dinheiro", "Pix", "Boleto"],
+        "add_supplier": "Qual o fornecedor: ",
+        "description": "Descrição: ",
+        "register_expense_button": "Cadastrar despesa",
+        "expense_registered": "Conta cadastrada!",
+        "error_registering_expense": "Erro ao salvar a conta: {e}",
+        "no_sales": "Não há vendas registradas.",
+        "no_expenses": "Não há despesas registradas.",
+        "no_investments": "Não há investimentos registrados.",
+        "sales_total": "Total de vendas no mês de {month}: R$ {total:.2f}",
+        "expenses_total": "Total de despesas no mês de {month}: R$ {total:.2f}",
+        "investments_paid_total": "Total de investimentos pagos no mês de {month}: R$ {total:.2f}",
+        "campaigns_paid_total": "Total de campanhas pagos no mês de {month}: R$ {total:.2f}",
+        "monthly_balance": "Balanço do mês {month}: R$ {balance:.2f}",
+        "enter_month": "Navegação Meses",
+        "months": [
+            "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+        ],
+        "year": "Qual Ano:",
+        "sales": "Entradas: ",
+        "expenses": "Saídas: ",
+        "investment_payments": "Pagamentos de Investimentos:",
+        "campaigns": "Campanhas: ",
+    },
+    "English": {
+        "title": "Financial",
+        "menu_register_expense": "Register Expense",
+        "menu_financial_insights": "Financial Insights",
+        "register_expense": "Expense Tab",
+        "select_expense": "Select Expense",
+        "water_supplier": "Water Supplier",
+        "electricity_supplier": "Electricity Supplier",
+        "internet_supplier": "Internet Supplier",
+        "supplier": "Supplier",
+        "bill": "Bill",
+        "salary_payment": "Employee Payment",
+        "expense_value": "Bill Value",
+        "payment_date": "Payment Date",
+        "payment_method": "Payment Method",
+        "payment_method_options": ["Debit", "Automatic Debit", "Cash", "Pix", "Bill"],
+        "add_supplier": "Which supplier: ",
+        "description": "Description: ",
+        "register_expense_button": "Register expense",
+        "expense_registered": "Expense registered!",
+        "error_registering_expense": "Error registering expense: {e}",
+        "no_sales": "No sales recorded.",
+        "no_expenses": "No expenses recorded.",
+        "no_investments": "No investments recorded.",
+        "sales_total": "Total sales in {month}: R$ {total:.2f}",
+        "expenses_total": "Total expenses in {month}: R$ {total:.2f}",
+        "investments_paid_total": "Total investments paid in {month}: R$ {total:.2f}",
+        "campaigns_paid_total": "Total campaigns paid in {month}: R$ {total:.2f}",
+        "monthly_balance": "Balance for {month}: R$ {balance:.2f}",
+        "enter_month": "Month Navigation",
+        "months": [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ],
+        "year": "Which Year:",
+        "sales": "Sales: ",
+        "expenses": "Expenses: ",
+        "investment_payments": "Investment Payments:",
+        "campaigns": "Campaigns: ",
+    }
+}
+
+# Função para obter o texto traduzido
+def t(key):
+    return translations[st.session_state.language].get(key, key)
+
 def renderizar_gerenciamento_financeiro(user_id):
-    st.title("Financeiro")
+    st.title(t("title"))
 
     # Menu de navegação
     menu = st.radio(
         "Navegação",
         [
-            "Cadastrar Despesa", "Insights Financeiros"
+            t("menu_register_expense"), t("menu_financial_insights")
         ],
         horizontal=True
     )
 
     # Mapeamento de funções de renderização
     mapa_funcoes = {
-        "Cadastrar Despesa": despesas,
-        "Insights Financeiros": insights_financeiros
+        t("menu_register_expense"): despesas,
+        t("menu_financial_insights"): insights_financeiros
     }
 
     if menu in mapa_funcoes:
         mapa_funcoes[menu](user_id)
 
 def despesas(user_id):
-    st.title("Aba de Despesas")
+    st.title(t("register_expense"))
     
     contas = {}
 
     opcoes_despesas = {
-        "Àgua": "Fornecedor de Àgua",
-        "Luz": "Fornecedor de Luz",
-        "Internet": "Fornecedor de Internet",
-        "Fornecedor": None,
-        "Boleto": None,
+        t("water_supplier"): "Fornecedor de Àgua",
+        t("electricity_supplier"): "Fornecedor de Luz",
+        t("internet_supplier"): "Fornecedor de Internet",
+        t("supplier"): None,
+        t("bill"): None,
+        t("salary_payment"): None,
     }
 
-    opcao = st.selectbox("Selecione a despesa", list(opcoes_despesas.keys()))
+    opcao = st.selectbox(t("select_expense"), list(opcoes_despesas.keys()))
     fornecedor = opcoes_despesas.get(opcao)
     descricao = ""
 
-    valor = st.number_input("Valor da conta")
-    data = st.date_input("Data do pagamento").strftime("%Y-%m-%d")
-    pagamento = st.selectbox("Forma de pagamento", ["Débito", "Débito Automático", "Dinheiro", "Pix", "Boleto"])
+    valor = st.number_input(t("expense_value"))
+    data = st.date_input(t("payment_date")).strftime("%Y-%m-%d")
+    pagamento = st.selectbox(t("payment_method"), t("payment_method_options"))
 
     if opcao in ["Fornecedor", "Boleto"]:
-        fornecedor = st.text_input("Qual o fornecedor: ")
-        descricao = st.text_input("Descrição: ")
+        fornecedor = st.text_input(t("add_supplier"))
+        descricao = st.text_input(t("description"))
 
     contas.update({
         "tipo": opcao,
@@ -70,12 +158,12 @@ def despesas(user_id):
         "user_id": user_id
     })
 
-    if st.button("Cadastrar despesa"):
+    if st.button(t("register_expense_button")):
         try:
             supabase.table("despesas").insert(contas).execute()
-            st.success("Conta cadastrada!")
+            st.success(t("expense_registered"))
         except Exception as e:
-            st.error(f"Erro ao salvar a conta: {e}")
+            st.error(t(f"error_registering_expense"))
 
 def insights_financeiros(user_id):
     vendas = obter_dados_tabela("vendas", user_id)
@@ -84,20 +172,16 @@ def insights_financeiros(user_id):
     campanhas = obter_dados_tabela("campanha", user_id)
 
     if not vendas:
-        st.warning("Não há vendas registradas.")
+        st.warning(t("no_sales"))
     if not despesas:
-        st.warning("Não há despesas registradas.")
+        st.warning(t("no_expenses"))
     if not investimentos:
-        st.warning("Não há investimentos registrados.")
+        st.warning(t("no_investments"))
 
     mes_atual = datetime.today().month
 
     menu_meses = st.selectbox(
-        "Navegação Meses",
-        [
-            "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
-        ]
+        t("enter_month"),t("months"), index=mes_atual-1
     )
 
     mapas_meses = {
@@ -105,7 +189,7 @@ def insights_financeiros(user_id):
         "Julho": 7, "Agosto": 8, "Setembro": 9, "Outubro": 10, "Novembro": 11, "Dezembro": 12
     }
 
-    ano = st.number_input("Qual Ano:", min_value=2000, max_value=datetime.today().year + 10, value=datetime.today().year)
+    ano = st.number_input(t("year"), min_value=2000, max_value=datetime.today().year + 10, value=datetime.today().year)
 
     mes_referente = mapas_meses.get(menu_meses, mes_atual)
 
@@ -154,13 +238,13 @@ def insights_financeiros(user_id):
     )
 
     # Exibir os resultados
-    st.markdown(f"Total de vendas no mês de {menu_meses}: R$ {vendas_mes_atual:.2f}")
-    st.markdown(f"Total de despesas no mês de {menu_meses}: R$ {despesas_mes_atual:.2f}")
-    st.markdown(f"Total de investimentos pagos no mês de {menu_meses}: R$ {investimentos_mes_atual:.2f}")
-    st.markdown(f"Total de campanhas pagos no mês de {menu_meses}: R$ {campanhas_mes_atual:.2f}")
+    st.markdown(t("sales_total").format(month=menu_meses, total=vendas_mes_atual))
+    st.markdown(t("expenses_total").format(month=menu_meses, total=despesas_mes_atual))
+    st.markdown(t("investments_paid_total").format(month=menu_meses, total=investimentos_mes_atual))
+    st.markdown(t("campaigns_paid_total").format(month=menu_meses, total=campanhas_mes_atual))
 
     balanco_mes_atual = vendas_mes_atual - (despesas_mes_atual + investimentos_mes_atual +  campanhas_mes_atual)
-    st.markdown(f"Balanço do mês {menu_meses}: R$ {balanco_mes_atual:.2f}")
+    st.markdown(t("monthly_balance").format(month=menu_meses, balance=balanco_mes_atual))
 
     if vendas:
         df_vendas = pd.DataFrame(vendas)
@@ -169,7 +253,7 @@ def insights_financeiros(user_id):
         filtro_entrada = df_vendas[
             (df_vendas['data_venda'].dt.year == ano) & (df_vendas['data_venda'].dt.month == mes_referente)
         ]
-        st.markdown("Entradas: ")
+        st.markdown(t("sales"))
         st.dataframe(filtro_entrada, use_container_width=True)
 
     if despesas:
@@ -179,13 +263,13 @@ def insights_financeiros(user_id):
         filtro_saida = df_despesas[
             (df_despesas['data_despesa'].dt.year == ano) & (df_despesas['data_despesa'].dt.month == mes_referente)
         ]
-        st.markdown("Saídas: ")
+        st.markdown(t("expenses"))
         st.dataframe(filtro_saida, use_container_width=True)
 
     # Exibir detalhes dos pagamentos de investimentos
     if pagamentos_investimentos:
         df_pagamentos = pd.DataFrame(pagamentos_investimentos)
-        st.markdown("Pagamentos de Investimentos:")
+        st.markdown(t("investment_payments"))
         st.dataframe(df_pagamentos, use_container_width=True)
 
     if campanhas:
@@ -195,5 +279,5 @@ def insights_financeiros(user_id):
         filtro_campanhas = df_campanhas[
             (df_campanhas['data_inicio'].dt.year == ano) & (df_campanhas['data_inicio'].dt.month == mes_referente)
         ]
-        st.markdown("Campanhas: ")
+        st.markdown(t("campaigns"))
         st.dataframe(filtro_campanhas, use_container_width=True)

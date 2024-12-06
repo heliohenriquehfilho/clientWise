@@ -14,7 +14,7 @@ key = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
 def calcular_valor_total(preco, desconto, quantidade):
-    """Calcula o valor total da venda"""
+    """Calcula o valor total do produto"""
     return round((preco - (preco * (desconto / 100))) * quantidade, 2)
 
 def renderizar_cadastro_de_venda(user_id):
@@ -32,16 +32,36 @@ def renderizar_cadastro_de_venda(user_id):
         st.error("Nenhum cliente cadastrado.")
         return
 
-    # Selecione Produto
+    # Selecione os Produtos (multiselect)
     if produtos:
-        venda_produto_nome = st.selectbox("Selecione o produto", [produto["nome"] for produto in produtos])
-        produto_selecionado = next((p for p in produtos if p["nome"] == venda_produto_nome), None)
-        if produto_selecionado:
-            estoque = produto_selecionado["quantidade"]
-            ativo = produto_selecionado["ativo"]
-            preco = produto_selecionado["preco"]
-            tipo = produto_selecionado["tipo"]
-            venda_quantidade = int(st.number_input("Quantidade de venda", min_value=1, step=1))
+        venda_produtos_nomes = [produto["nome"] for produto in produtos]
+        produtos_selecionados = st.multiselect("Selecione os produtos", venda_produtos_nomes)
+        produtos_lista = []
+        
+        for produto_nome in produtos_selecionados:
+            produto_selecionado = next((p for p in produtos if p["nome"] == produto_nome), None)
+            if produto_selecionado:
+                estoque = produto_selecionado["quantidade"]
+                ativo = produto_selecionado["ativo"]
+                preco = produto_selecionado["preco"]
+                tipo = produto_selecionado["tipo"]
+                
+                # Input de quantidade e desconto para cada produto
+                quantidade = int(st.number_input(f"Quantidade de {produto_nome}", min_value=1, max_value=estoque, step=1))
+                desconto = st.number_input(f"Desconto para {produto_nome} (%)", min_value=0.0, max_value=100.0, step=0.1)
+                
+                if tipo == "Fisico" and quantidade > estoque:
+                    st.error(f"Estoque insuficiente para o produto {produto_nome}. Disponível: {estoque}.")
+                
+                if ativo is False:
+                    st.error(f"Produto {produto_nome} está inativo.")
+                
+                produtos_lista.append({
+                    "nome": produto_nome,
+                    "quantidade": quantidade,
+                    "desconto": desconto,
+                    "preco": preco,
+                })
     else:
         st.error("Nenhum produto cadastrado.")
         return
@@ -63,23 +83,17 @@ def renderizar_cadastro_de_venda(user_id):
 
     # Outros detalhes da venda
     venda_data = st.date_input("Data da Compra").strftime("%Y-%m-%d")
-    venda_desconto = st.number_input("Desconto em %", min_value=0.0, max_value=100.0, step=0.1)
     venda_pagamento = st.selectbox("Formato de pagamento", ["Crédito", "Débito", "Pix", "Dinheiro"])
 
     # Calcular valor total
-    valor_total_venda = calcular_valor_total(preco, venda_desconto, venda_quantidade)
+    valor_total_venda = sum([calcular_valor_total(produto["preco"], produto["desconto"], produto["quantidade"]) for produto in produtos_lista])
     st.write(f"O valor total da venda é: R$ {valor_total_venda:.2f}")
 
     cliente = next(v for v in clientes if v["nome"] == venda_cliente)
 
     # Validar e salvar venda
     if st.button("Salvar venda"):
-        if tipo == "Fisico":
-            if venda_quantidade > estoque:
-                st.error(f"Estoque insuficiente. Disponível: {estoque}.")
-        elif ativo is False:
-            st.error("Produto inativo.")
-        elif datetime.strptime(venda_data, "%Y-%m-%d").date() < data_contratacao:
+        if datetime.strptime(venda_data, "%Y-%m-%d").date() < data_contratacao:
             st.error("Vendedor não contratado na data da venda.")
         elif data_demissao and datetime.strptime(venda_data, "%Y-%m-%d").date() > data_demissao:
             st.error("Vendedor já demitido na data da venda.")
@@ -88,20 +102,25 @@ def renderizar_cadastro_de_venda(user_id):
         else:
             venda = {
                 "user_id": user_id,
-                "produto": venda_produto_nome,
+                "produtos": produtos_lista,  # Armazenar os produtos como um JSONB
                 "cliente": venda_cliente,
                 "vendedor": venda_vendedor_nome,
                 "data_venda": venda_data,
-                "desconto": venda_desconto,
                 "pagamento": venda_pagamento,
-                "quantidade": venda_quantidade,
                 "valor": valor_total_venda,
             }
             try:
                 supabase.table("vendas").insert(venda).execute()
-                if tipo == "Fisico":
-                    novo_estoque = estoque - venda_quantidade
-                    supabase.table("produtos").update({"quantidade": novo_estoque}).eq("id", produto_selecionado["id"]).execute()
+                
+                # Atualizar o estoque dos produtos vendidos
+                for produto in produtos_lista:
+                    produto_nome = produto["nome"]
+                    quantidade_vendida = produto["quantidade"]
+                    produto_selecionado = next((p for p in produtos if p["nome"] == produto_nome), None)
+                    if produto_selecionado and produto_selecionado["tipo"] == "Fisico":
+                        estoque_atual = produto_selecionado["quantidade"]
+                        novo_estoque = estoque_atual - quantidade_vendida
+                        supabase.table("produtos").update({"quantidade": novo_estoque}).eq("produto__c", produto_selecionado["produto__c"]).execute()
             
                 st.success("Venda cadastrada com sucesso!")
             except Exception as e:

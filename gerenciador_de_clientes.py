@@ -21,10 +21,19 @@ def renderizar_gerenciador_de_clientes(user_id):
     clientes = supabase.table("clientes").select("*").eq("user_id", user_id).execute().data
     vendas = supabase.table('vendas').select("*").eq("user_id", user_id).execute().data
 
-    st.dataframe(clientes, column_order=[
+    # Convertendo a coluna 'ativo' de True/False para texto
+    for cliente in clientes:
+        cliente['ativo'] = 'Ativo' if cliente['ativo'] else 'Inativo'
+
+    # Agora o dataframe 'clientes' tem a coluna 'ativo' como texto em vez de checkbox
+    import pandas as pd
+    clientes_df = pd.DataFrame(clientes)
+
+    # Exibindo o DataFrame no Streamlit
+    st.dataframe(clientes_df, column_order=[
         "nome", "endereco", "email", "bairro", "cidade", 
         "estado", "cep", "ativo", "genero", "data_nascimento"
-    ])
+    ], use_container_width=True)
 
     if clientes:
         nome_cliente = [cliente["nome"] for cliente in clientes]
@@ -101,19 +110,38 @@ def renderizar_gerenciador_de_clientes(user_id):
                     st.rerun()
 
 
-            # Excluir cliente
-            if st.button("Excluir Cliente"):
-                venda = next((v for v in vendas if v["cliente"] == cliente_nome), None)
-                if venda:
-                    st.error("Esse cliente tem venda associada, por favor desative o cliente no gerenciador de clientes.")
-                    st.error("Esse cliente não poderá ser excluído.")
+        # Permitir selecionar múltiplos clientes
+        clientes_selecionados = st.multiselect("Selecione os clientes para excluir", nome_cliente)
+
+        if clientes_selecionados:
+            if st.button("Excluir Clientes Selecionados"):
+                clientes_para_excluir = [cliente for cliente in clientes if cliente["nome"] in clientes_selecionados]
+                clientes_com_venda = []
+                clientes_excluidos = []
+
+                # Verificar se algum cliente selecionado tem vendas associadas
+                for cliente in clientes_para_excluir:
+                    cliente_nome = cliente["nome"]
+                    venda = next((v for v in vendas if v["cliente"] == cliente_nome), None)
+                    if venda:
+                        clientes_com_venda.append(cliente_nome)
+                    else:
+                        # Excluir cliente se não houver vendas associadas
+                        cliente_id = cliente["client__c"]
+                        try:
+                            resposta = supabase.table("clientes").delete().eq("client__c", cliente_id).execute()
+                            if resposta.data:
+                                clientes_excluidos.append(cliente_nome)
+                        except Exception as e:
+                            st.error(f"Erro ao excluir o cliente {cliente_nome}: {e}")
+
+                # Exibir resultados
+                if clientes_com_venda:
+                    st.warning(f"Os seguintes clientes não puderam ser excluídos, pois têm vendas associadas: {', '.join(clientes_com_venda)}")
+                if clientes_excluidos:
+                    st.success(f"Clientes excluídos com sucesso: {', '.join(clientes_excluidos)}")
+                    st.rerun()
                 else:
-                    resposta = supabase.table("clientes").delete().eq("client__c", cliente_id).execute()
-                    try:
-                        if resposta.data:
-                            st.success(f"Cliente '{cliente_nome}' excluído com sucesso.")
-                            st.rerun()
-                    except Exception as e:
-                        st.error(f"Erro ao excluir o cliente: {e}")
+                    st.warning("Nenhum cliente foi excluído.")
     else:
         st.warning("Nenhum cliente cadastrado.")

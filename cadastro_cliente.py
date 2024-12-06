@@ -102,6 +102,9 @@ def renderizar_cadastro_cliente(user_id):
                 erros = []
                 duplicados = []  # Lista para armazenar os duplicados encontrados
                 progresso = st.progress(0)
+
+                seen_clients = set()
+
                 for index, row in data.iterrows():
                     cliente = {
                         "nome": row.get(mapeamento["nome"]),
@@ -110,6 +113,13 @@ def renderizar_cadastro_cliente(user_id):
                         "email": row.get(mapeamento["email"]),
                         "user_id": user_id
                     }
+
+                    # Verificar se o cliente já foi visto
+                    cliente_id = (cliente["nome"], cliente["contato"], cliente["email"])
+                    if cliente_id in seen_clients:
+                        duplicados.append(cliente['nome'])  # Adicionar cliente duplicado à lista
+                        continue
+                    seen_clients.add(cliente_id)
 
                     # Verificar se os campos essenciais estão preenchidos (nome, contato, email)
                     if not all([cliente["nome"], cliente["contato"], cliente["email"]]):
@@ -132,10 +142,9 @@ def renderizar_cadastro_cliente(user_id):
                         if resposta.data:
                             duplicados.append(cliente['nome'])  # Adicionar cliente duplicado à lista
                         else:
-                            cliente["client__c"] = f"client-{pd.Timestamp.now().timestamp()}"  # Gera um ID único
                             resposta_insert = supabase.table("clientes").insert(cliente).execute()
-                            if resposta_insert.status_code != 201:
-                                erros.append(f"Erro ao salvar {cliente['nome']}: {resposta_insert}")
+                            if resposta_insert.data:
+                                st.success(f"Cliente Salvo {cliente['nome']}")
                     except Exception as e:
                         erros.append(f"Erro ao salvar {cliente['nome']}: {e}")
 
