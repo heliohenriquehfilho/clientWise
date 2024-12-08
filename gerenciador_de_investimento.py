@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 from supabase import create_client, Client
 from obter_dados_tabela import obter_dados_tabela
+import pandas as pd
 
 # Carregar variáveis de ambiente
 load_dotenv()
@@ -82,9 +83,18 @@ def pagamento_investimento(user_id):
     if not investimentos_pendentes:
         st.warning("Não há investimentos pendentes para pagamento.")
         return
+    
+    # Selectbox para escolher o investimento
+    investimento_selecionado = st.selectbox(
+        "Selecione o investimento",
+        investimentos_pendentes,
+        format_func=lambda x: x["nome"]
+    )
 
-    investimento_selecionado = st.selectbox("Selecione o investimento", investimentos_pendentes, format_func=lambda x: x["nome"])
-    st.write(f"Detalhes do Investimento: {investimento_selecionado}")
+    if investimento_selecionado:
+        st.write("Detalhes do Investimento:")
+        df = pd.DataFrame([investimento_selecionado])  # Coloca o dicionário em uma lista
+        st.dataframe(df, column_order=["nome", "descricao", "tipo_pagamento", "duracao", "valor", "pagamentos", "encerrado"], use_container_width=True)
 
     # Campo para data e valor do pagamento
     data_pagamento = st.date_input("Data do pagamento", datetime.now().date())
@@ -128,8 +138,6 @@ def pagamento_investimento(user_id):
             st.success(f"Pagamento registrado com sucesso para: {investimento_selecionado['nome']}.")
         except Exception as e:
             st.error(f"Erro ao registrar pagamento: {e}")
-
-
 
 def gerenciar_investimento(user_id):
     """Exibe e permite gerenciar os investimentos associados ao user_id."""

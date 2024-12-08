@@ -26,7 +26,7 @@ def is_valid_email(email):
 translations = {
     "Português": {
         "title": "ClientWise",
-        "news_header": "📢 Novidades da versão 0.2.1 🚀",
+        "news_header": "📢 Novidades da versão 0.2.2 🚀",
         "news_content": """
         ### 🆕 Novidades e Melhorias
         -> **Excluir Clientes em Massa:** Selecionar vários clientes para excluir. \n
@@ -50,7 +50,7 @@ translations = {
     },
     "English": {
         "title": "ClientWise",
-        "news_header": "📢 Version 0.2.1 News 🚀",
+        "news_header": "📢 Version 0.2.2 News 🚀",
         "news_content": """
         ### 🆕 What's New
         -> **Mass Delete Clients:** Select multiple clients to delete. \n

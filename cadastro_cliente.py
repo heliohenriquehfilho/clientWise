@@ -159,7 +159,3 @@ def renderizar_cadastro_cliente(user_id):
                     st.warning(f"Alguns clientes não foram importados: {', '.join(erros)}")
                 else:
                     st.success("Todos os clientes foram importados com sucesso!")
-
-
-
-
