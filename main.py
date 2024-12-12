@@ -18,8 +18,7 @@ st.set_page_config(
 load_dotenv()
 
 adsense_global_script = """
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4415407797807365"
-     crossorigin="anonymous"></script>
+<meta name="google-adsense-account" content="ca-pub-4415407797807365">
 """
 
 # Insira o script global no topo do app
