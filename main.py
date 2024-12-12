@@ -17,6 +17,25 @@ st.set_page_config(
 
 load_dotenv()
 
+# Código de anúncio fornecido pelo AdSense
+ads_code = """
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4415407797807365"
+     crossorigin="anonymous"></script>
+<div style="text-align:center;">
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-4415407797807365"
+        data-ad-slot="1234567890"  <!-- Substitua pelo slot correto -->
+        data-ad-format="auto"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</div>
+"""
+
+# Insere o anúncio no Streamlit
+st.components.v1.html(ads_code, height=200)  # Ajuste a altura conforme necessário 
+
 def is_valid_email(email):
     # Padrão atualizado para aceitar domínios mais longos como .gov.br
     email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})*$'
