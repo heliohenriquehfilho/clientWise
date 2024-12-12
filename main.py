@@ -21,16 +21,6 @@ load_dotenv()
 ads_code = """
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4415407797807365"
      crossorigin="anonymous"></script>
-<div style="text-align:center;">
-    <ins class="adsbygoogle"
-        style="display:block"
-        data-ad-client="ca-pub-4415407797807365"
-        data-ad-slot="1234567890"  <!-- Substitua pelo slot correto -->
-        data-ad-format="auto"></ins>
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-</div>
 """
 
 # Insere o anúncio no Streamlit
