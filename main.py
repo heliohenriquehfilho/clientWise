@@ -19,8 +19,10 @@ load_dotenv()
 
 # Código de anúncio fornecido pelo AdSense
 ads_code = """
+<head>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4415407797807365"
      crossorigin="anonymous"></script>
+</head>
 """
 
 # Insere o anúncio no Streamlit
