@@ -17,15 +17,13 @@ st.set_page_config(
 
 load_dotenv()
 
-# Código de anúncio fornecido pelo AdSense
-ads_code = """
-<head>
-<meta name="google-adsense-account" content="ca-pub-4415407797807365">
-</head>
+adsense_global_script = """
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4415407797807365"
+     crossorigin="anonymous"></script>
 """
 
-# Insere o anúncio no Streamlit
-st.components.v1.html(ads_code, height=200)  # Ajuste a altura conforme necessário 
+# Insira o script global no topo do app
+st.components.v1.html(adsense_global_script, height=0)
 
 def is_valid_email(email):
     # Padrão atualizado para aceitar domínios mais longos como .gov.br
